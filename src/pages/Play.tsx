@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,8 +11,8 @@ import { GameCard } from '@/components/GameCard';
 import { TeamScoreboard, TeamWinner } from '@/components/TeamScoreboard';
 import { useGameStore } from '@/store/useGameStore';
 import { DM_MASTER, getItemsByIds } from '@/data';
-import { generateQuestionSet, calculatePoints } from '@/lib/generators';
-import { GameMode, Language } from '@/data/types';
+import { generateQuestionSet } from '@/lib/generators';
+import { GameMode } from '@/data/types';
 
 export function Play() {
   const { mode } = useParams<{ mode: string }>();
@@ -26,10 +26,7 @@ export function Play() {
     isPlaying,
     isPaused,
     currentQuestion,
-    questionIndex,
-    totalQuestions,
     score,
-    streak,
     bestStreak,
     results,
     isTeamMode,

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GameMode, GameResult, GameSettings, Language, Team, Question, DMItem } from '@/data/types';
+import { GameMode, GameResult, GameSettings, Language, Team, Question } from '@/data/types';
 import { PRESETS, PresetKey } from '@/data';
 
 interface GameState {

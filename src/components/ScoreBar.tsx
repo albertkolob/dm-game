@@ -1,11 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Heart, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useGameStore } from '@/store/useGameStore';
 
 export function ScoreBar() {
-  const { t } = useTranslation();
   const { score, streak, lives, currentMode, questionIndex, totalQuestions } = useGameStore();
   const showLives = currentMode === 'lightning_ladder';
 

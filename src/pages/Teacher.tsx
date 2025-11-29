@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Users, Settings2, Play, Plus, Minus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SetBuilder } from '@/components/SetBuilder';
 import { LanguagePicker } from '@/components/LanguagePicker';
@@ -277,7 +277,7 @@ export function Teacher() {
               <>
                 {/* Team list */}
                 <div className="space-y-3">
-                  {teams.map((team, index) => (
+                  {teams.map((team) => (
                     <Card key={team.id}>
                       <CardContent className="p-4 flex items-center gap-3">
                         <div

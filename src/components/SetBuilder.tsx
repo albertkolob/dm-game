@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { DM_MASTER, getBooksByWork, PRESETS, PresetKey } from '@/data';
-import { Work, WORK_NAMES, Language } from '@/data/types';
+import { DM_MASTER, PRESETS, PresetKey } from '@/data';
+import { Work, WORK_NAMES } from '@/data/types';
 import { useGameStore } from '@/store/useGameStore';
 
 const WORKS: Work[] = ['OT', 'NT', 'BOM', 'DC', 'PGP'];

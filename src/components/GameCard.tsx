@@ -5,7 +5,6 @@ import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
 import { Question, ACE } from '@/data/types';
 import { useGameStore } from '@/store/useGameStore';
 import { calculatePoints } from '@/lib/generators';

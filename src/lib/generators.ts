@@ -136,7 +136,7 @@ export function generateMixedQuestion(
   lang: Language,
   pool: DMItem[]
 ): Question {
-  const questionTypes = ['ref', 'cloze', 'ace'] as const;
+  const questionTypes: ('ref' | 'cloze' | 'ace')[] = ['ref', 'cloze', 'ace'];
   const type = randomItem(questionTypes);
 
   switch (type) {

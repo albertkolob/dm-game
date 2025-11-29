@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useGameStore } from '@/store/useGameStore';
-import { formatTime } from '@/lib/utils';
 
 interface TimerProps {
   onTimeUp?: () => void;
