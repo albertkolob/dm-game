@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,7 @@ export function Play() {
   const { mode } = useParams<{ mode: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const hasRecordedResults = useRef(false);
 
   const {
     language,
@@ -92,13 +93,26 @@ export function Play() {
     navigate('/');
   };
 
+  // Record verses studied when game completes (only once per game session)
+  useEffect(() => {
+    if (!isPlaying && results.length > 0 && !hasRecordedResults.current) {
+      hasRecordedResults.current = true;
+      incrementVersesStudied(results.length);
+    }
+  }, [isPlaying, results.length, incrementVersesStudied]);
+
+  // Reset the recorded flag when starting a new game
+  useEffect(() => {
+    if (isPlaying) {
+      hasRecordedResults.current = false;
+    }
+  }, [isPlaying]);
+
   // Game complete screen
   if (!isPlaying && results.length > 0) {
     const correctCount = results.filter((r) => r.correct).length;
     const accuracy = Math.round((correctCount / results.length) * 100);
     const missedResults = results.filter((r) => !r.correct);
-
-    incrementVersesStudied(results.length);
 
     return (
       <div className="min-h-screen bg-background safe-area-padding">
