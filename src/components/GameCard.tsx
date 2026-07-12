@@ -19,12 +19,13 @@ interface GameCardProps {
 
 export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
   const { t } = useTranslation();
-  const { settings, currentMode, language } = useGameStore();
+  const { settings, currentMode, language, timeRemaining, isPlaying } = useGameStore();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [selectedACE, setSelectedACE] = useState<ACE | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [isTimedOut, setIsTimedOut] = useState(false);
 
   // Reset state when question changes
   useEffect(() => {
@@ -33,7 +34,25 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
     setSelectedVerse(null);
     setIsRevealed(false);
     setIsCorrect(false);
+    setIsTimedOut(false);
   }, [question]);
+
+  // Time up: reveal the answer as incorrect, exactly once per question
+  useEffect(() => {
+    if (timeRemaining > 0 || isRevealed || !isPlaying) return;
+
+    setIsTimedOut(true);
+    setIsCorrect(false);
+    setIsRevealed(true);
+    onAnswer(false, 0);
+
+    if (settings.enableHaptics) {
+      vibrate([50, 50, 50]);
+    }
+    if (settings.enableSound) {
+      playSound('incorrect');
+    }
+  }, [timeRemaining, isRevealed, isPlaying, onAnswer, settings.enableHaptics, settings.enableSound]);
 
   const handleOptionSelect = (index: number) => {
     if (isRevealed) return;
@@ -148,7 +167,7 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
                   role="alert"
                   aria-live="assertive"
                 >
-                  {isCorrect ? t('game.correct') : t('game.incorrect')}
+                  {isCorrect ? t('game.correct') : isTimedOut ? t('game.timeUp') : t('game.incorrect')}
                 </div>
 
                 {!isCorrect && (
@@ -260,7 +279,7 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
                 role="alert"
                 aria-live="assertive"
               >
-                {isCorrect ? t('game.correct') : t('game.incorrect')}
+                {isCorrect ? t('game.correct') : isTimedOut ? t('game.timeUp') : t('game.incorrect')}
               </div>
 
               <Button onClick={onNext} className="w-full" size="lg">

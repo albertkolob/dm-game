@@ -221,13 +221,8 @@ export const useGameStore = create<GameState>()(
       setTimeRemaining: (time) => set({ timeRemaining: time }),
 
       decrementTime: () => {
-        const { timeRemaining, currentMode } = get();
-        if (timeRemaining <= 0) {
-          if (currentMode === 'lightning_ladder') {
-            get().loseLife();
-          }
-          return;
-        }
+        const { timeRemaining } = get();
+        if (timeRemaining <= 0) return;
         set({ timeRemaining: timeRemaining - 1 });
       },
 

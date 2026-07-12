@@ -84,10 +84,6 @@ export function Play() {
     setTimeRemaining(settings.timePerQuestion);
   }, [nextQuestion, setTimeRemaining, settings.timePerQuestion]);
 
-  const handleTimeUp = useCallback(() => {
-    handleAnswer(false, 0);
-  }, [handleAnswer]);
-
   const handleQuit = () => {
     endGame();
     navigate('/');
@@ -229,7 +225,7 @@ export function Play() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
 
-          <Timer onTimeUp={handleTimeUp} />
+          <Timer />
 
           <Button
             variant="ghost"
