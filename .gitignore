@@ -38,3 +38,8 @@ lerna-debug.log*
 
 # Testing
 coverage
+
+# TypeScript build artifacts
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
