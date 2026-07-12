@@ -60,7 +60,7 @@ export function Play() {
     return () => {
       endGame();
     };
-  }, [mode, selectedIds, settings.questionsPerRound, language]);
+  }, [mode, selectedIds, settings.questionsPerRound, language, navigate, startGame, endGame]);
 
   const handleAnswer = useCallback(
     (correct: boolean, points: number) => {
