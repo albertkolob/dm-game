@@ -142,6 +142,32 @@ describe('endGame stat recording', () => {
   });
 });
 
+describe('hasAnswered (timer pause during feedback)', () => {
+  it('is set by answerQuestion and cleared by nextQuestion', () => {
+    useGameStore.getState().startGame('reference_rush', questions);
+    expect(useGameStore.getState().hasAnswered).toBe(false);
+
+    useGameStore.getState().answerQuestion(true, 100);
+    expect(useGameStore.getState().hasAnswered).toBe(true);
+
+    useGameStore.getState().nextQuestion();
+    expect(useGameStore.getState().hasAnswered).toBe(false);
+  });
+
+  it('is set on wrong answers too', () => {
+    useGameStore.getState().startGame('reference_rush', questions);
+    useGameStore.getState().answerQuestion(false, 0);
+    expect(useGameStore.getState().hasAnswered).toBe(true);
+  });
+
+  it('resets when a new game starts', () => {
+    useGameStore.getState().startGame('reference_rush', questions);
+    useGameStore.getState().answerQuestion(true, 100);
+    useGameStore.getState().startGame('reference_rush', questions);
+    expect(useGameStore.getState().hasAnswered).toBe(false);
+  });
+});
+
 describe('decrementTime', () => {
   it('counts down and stops at zero', () => {
     useGameStore.getState().startGame('reference_rush', questions);
