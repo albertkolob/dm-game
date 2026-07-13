@@ -3,28 +3,19 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useGameStore } from '@/store/useGameStore';
 
-interface TimerProps {
-  onTimeUp?: () => void;
-}
-
-export function Timer({ onTimeUp }: TimerProps) {
+export function Timer() {
   const { timeRemaining, decrementTime, isPaused, isPlaying, settings } = useGameStore();
+  const isExpired = timeRemaining <= 0;
 
   useEffect(() => {
-    if (!isPlaying || isPaused) return;
+    if (!isPlaying || isPaused || isExpired) return;
 
     const interval = setInterval(() => {
       decrementTime();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPlaying, isPaused, decrementTime]);
-
-  useEffect(() => {
-    if (timeRemaining <= 0 && onTimeUp) {
-      onTimeUp();
-    }
-  }, [timeRemaining, onTimeUp]);
+  }, [isPlaying, isPaused, isExpired, decrementTime]);
 
   const percentage = (timeRemaining / settings.timePerQuestion) * 100;
   const isLow = timeRemaining <= 5;

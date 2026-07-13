@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,6 @@ export function Play() {
   const { mode } = useParams<{ mode: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const hasRecordedResults = useRef(false);
 
   const {
     language,
@@ -39,7 +38,6 @@ export function Play() {
     nextQuestion,
     answerQuestion,
     addResult,
-    incrementVersesStudied,
     setTimeRemaining,
   } = useGameStore();
 
@@ -60,12 +58,12 @@ export function Play() {
     return () => {
       endGame();
     };
-  }, [mode, selectedIds, settings.questionsPerRound, language]);
+  }, [mode, selectedIds, settings.questionsPerRound, language, navigate, startGame, endGame]);
 
   const handleAnswer = useCallback(
     (correct: boolean, points: number) => {
-      answerQuestion(correct, points);
-
+      // Record the result before answerQuestion, which may end the game
+      // (last life lost) and snapshot results for the studied-verses stat
       if (currentQuestion) {
         addResult({
           questionId: currentQuestion.meta.id,
@@ -75,6 +73,8 @@ export function Play() {
           mode: mode as GameMode,
         });
       }
+
+      answerQuestion(correct, points);
     },
     [answerQuestion, addResult, currentQuestion, mode, settings.timePerQuestion]
   );
@@ -84,29 +84,10 @@ export function Play() {
     setTimeRemaining(settings.timePerQuestion);
   }, [nextQuestion, setTimeRemaining, settings.timePerQuestion]);
 
-  const handleTimeUp = useCallback(() => {
-    handleAnswer(false, 0);
-  }, [handleAnswer]);
-
   const handleQuit = () => {
     endGame();
     navigate('/');
   };
-
-  // Record verses studied when game completes (only once per game session)
-  useEffect(() => {
-    if (!isPlaying && results.length > 0 && !hasRecordedResults.current) {
-      hasRecordedResults.current = true;
-      incrementVersesStudied(results.length);
-    }
-  }, [isPlaying, results.length, incrementVersesStudied]);
-
-  // Reset the recorded flag when starting a new game
-  useEffect(() => {
-    if (isPlaying) {
-      hasRecordedResults.current = false;
-    }
-  }, [isPlaying]);
 
   // Game complete screen
   if (!isPlaying && results.length > 0) {
@@ -192,12 +173,8 @@ export function Play() {
                 onClick={() => {
                   const pool = getItemsByIds(selectedIds);
                   const gameMode = mode as GameMode;
-                  const questions = generateQuestionSet(
-                    language,
-                    pool,
-                    gameMode,
-                    settings.questionsPerRound
-                  );
+                  const questionCount = Math.min(settings.questionsPerRound, pool.length);
+                  const questions = generateQuestionSet(language, pool, gameMode, questionCount);
                   startGame(gameMode, questions);
                 }}
                 className="flex-1"
@@ -229,7 +206,7 @@ export function Play() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
 
-          <Timer onTimeUp={handleTimeUp} />
+          <Timer />
 
           <Button
             variant="ghost"

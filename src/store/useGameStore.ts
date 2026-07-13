@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GameMode, GameResult, GameSettings, Language, Team, Question } from '@/data/types';
 import { PRESETS, PresetKey } from '@/data';
+import { localDateString } from '@/lib/utils';
 
 interface GameState {
   // Language
@@ -65,7 +66,6 @@ interface GameState {
   lastPlayedDate: string | null;
   totalVersesStudied: number;
   updateDayStreak: () => void;
-  incrementVersesStudied: (count: number) => void;
 
   // Questions pool for current game
   questionsPool: Question[];
@@ -76,11 +76,9 @@ export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
       // Language
+      // The 'dm-game-language' localStorage key is owned by src/i18n (read at bootstrap)
       language: 'en',
-      setLanguage: (lang) => {
-        localStorage.setItem('dm-game-language', lang);
-        set({ language: lang });
-      },
+      setLanguage: (lang) => set({ language: lang }),
 
       // Selected set
       selectedIds: PRESETS.all_dm,
@@ -154,12 +152,16 @@ export const useGameStore = create<GameState>()(
           currentQuestion: questions[0] || null,
         }),
 
-      endGame: () =>
+      endGame: () => {
+        const { isPlaying, results, totalVersesStudied } = get();
+        if (!isPlaying) return; // already ended; don't record stats twice
         set({
           isPlaying: false,
           isPaused: false,
           currentQuestion: null,
-        }),
+          totalVersesStudied: totalVersesStudied + results.length,
+        });
+      },
 
       pauseGame: () => set({ isPaused: true }),
       resumeGame: () => set({ isPaused: false }),
@@ -171,7 +173,7 @@ export const useGameStore = create<GameState>()(
         const nextIndex = questionIndex + 1;
 
         if (nextIndex >= questionsPool.length) {
-          set({ isPlaying: false, currentQuestion: null });
+          get().endGame();
           return;
         }
 
@@ -221,20 +223,16 @@ export const useGameStore = create<GameState>()(
       setTimeRemaining: (time) => set({ timeRemaining: time }),
 
       decrementTime: () => {
-        const { timeRemaining, currentMode } = get();
-        if (timeRemaining <= 0) {
-          if (currentMode === 'lightning_ladder') {
-            get().loseLife();
-          }
-          return;
-        }
+        const { timeRemaining } = get();
+        if (timeRemaining <= 0) return;
         set({ timeRemaining: timeRemaining - 1 });
       },
 
       loseLife: () => {
         const { lives } = get();
         if (lives <= 1) {
-          set({ lives: 0, isPlaying: false });
+          set({ lives: 0 });
+          get().endGame();
         } else {
           set({ lives: lives - 1 });
         }
@@ -248,7 +246,7 @@ export const useGameStore = create<GameState>()(
       totalVersesStudied: 0,
 
       updateDayStreak: () => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = localDateString();
         const { lastPlayedDate, dayStreak } = get();
 
         if (lastPlayedDate === today) {
@@ -257,7 +255,7 @@ export const useGameStore = create<GameState>()(
 
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayStr = localDateString(yesterday);
 
         if (lastPlayedDate === yesterdayStr) {
           set({ dayStreak: dayStreak + 1, lastPlayedDate: today });
@@ -265,9 +263,6 @@ export const useGameStore = create<GameState>()(
           set({ dayStreak: 1, lastPlayedDate: today });
         }
       },
-
-      incrementVersesStudied: (count) =>
-        set((state) => ({ totalVersesStudied: state.totalVersesStudied + count })),
 
       // Questions pool
       questionsPool: [],
