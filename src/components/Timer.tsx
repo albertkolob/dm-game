@@ -4,18 +4,19 @@ import { cn } from '@/lib/utils';
 import { useGameStore } from '@/store/useGameStore';
 
 export function Timer() {
-  const { timeRemaining, decrementTime, isPaused, isPlaying, settings } = useGameStore();
+  const { timeRemaining, decrementTime, isPaused, isPlaying, hasAnswered, settings } = useGameStore();
   const isExpired = timeRemaining <= 0;
 
   useEffect(() => {
-    if (!isPlaying || isPaused || isExpired) return;
+    // hasAnswered pauses the countdown while the feedback screen is showing
+    if (!isPlaying || isPaused || isExpired || hasAnswered) return;
 
     const interval = setInterval(() => {
       decrementTime();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPlaying, isPaused, isExpired, decrementTime]);
+  }, [isPlaying, isPaused, isExpired, hasAnswered, decrementTime]);
 
   const percentage = (timeRemaining / settings.timePerQuestion) * 100;
   const isLow = timeRemaining <= 5;

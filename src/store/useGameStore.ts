@@ -25,6 +25,7 @@ interface GameState {
   // Current game state
   isPlaying: boolean;
   isPaused: boolean;
+  hasAnswered: boolean;
   currentQuestion: Question | null;
   questionIndex: number;
   totalQuestions: number;
@@ -105,6 +106,7 @@ export const useGameStore = create<GameState>()(
       // Current game state
       isPlaying: false,
       isPaused: false,
+      hasAnswered: false,
       currentQuestion: null,
       questionIndex: 0,
       totalQuestions: 0,
@@ -140,6 +142,7 @@ export const useGameStore = create<GameState>()(
           currentMode: mode,
           isPlaying: true,
           isPaused: false,
+          hasAnswered: false,
           questionIndex: 0,
           totalQuestions: questions.length,
           score: 0,
@@ -187,11 +190,15 @@ export const useGameStore = create<GameState>()(
           questionIndex: nextIndex,
           currentQuestion: questionsPool[nextIndex],
           timeRemaining: settings.timePerQuestion,
+          hasAnswered: false,
         });
       },
 
       answerQuestion: (correct, points) => {
         const { streak, bestStreak, isTeamMode, teams, currentTeamIndex } = get();
+
+        // Freeze the timer while the feedback screen is showing
+        set({ hasAnswered: true });
 
         if (correct) {
           const newStreak = streak + 1;
