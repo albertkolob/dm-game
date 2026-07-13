@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GameMode, GameResult, GameSettings, Language, Team, Question } from '@/data/types';
 import { PRESETS, PresetKey } from '@/data';
+import { localDateString } from '@/lib/utils';
 
 interface GameState {
   // Language
@@ -243,7 +244,7 @@ export const useGameStore = create<GameState>()(
       totalVersesStudied: 0,
 
       updateDayStreak: () => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = localDateString();
         const { lastPlayedDate, dayStreak } = get();
 
         if (lastPlayedDate === today) {
@@ -252,7 +253,7 @@ export const useGameStore = create<GameState>()(
 
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayStr = localDateString(yesterday);
 
         if (lastPlayedDate === yesterdayStr) {
           set({ dayStreak: dayStreak + 1, lastPlayedDate: today });
