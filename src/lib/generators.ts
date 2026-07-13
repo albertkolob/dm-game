@@ -7,13 +7,12 @@ import { shuffle, randomItem } from './utils';
  */
 export function generateReferenceQuestion(
   lang: Language,
-  pool: DMItem[]
+  pool: DMItem[],
+  item: DMItem = randomItem(pool)
 ): Question {
   if (pool.length < 4) {
     throw new Error('Pool must have at least 4 items');
   }
-
-  const item = randomItem(pool);
 
   // Get distractors from the same work preferably
   let distractors = pool.filter((d) => d.id !== item.id && d.work === item.work);
@@ -48,13 +47,12 @@ export function generateReferenceQuestion(
  */
 export function generateClozeQuestion(
   lang: Language,
-  pool: DMItem[]
+  pool: DMItem[],
+  item: DMItem = randomItem(pool)
 ): Question {
   if (pool.length < 4) {
     throw new Error('Pool must have at least 4 items');
   }
-
-  const item = randomItem(pool);
 
   // Get distractors
   const distractors = shuffle(pool.filter((d) => d.id !== item.id))
@@ -81,13 +79,13 @@ export function generateClozeQuestion(
  */
 export function generateACEQuestion(
   lang: Language,
-  pool: DMItem[]
+  pool: DMItem[],
+  item: DMItem = randomItem(pool)
 ): Question {
   if (pool.length < 4) {
     throw new Error('Pool must have at least 4 items');
   }
 
-  const item = randomItem(pool);
   const aceOptions: ACE[] = [
     'act_in_faith',
     'eternal_perspective',
@@ -127,20 +125,21 @@ export function generateACEQuestion(
  */
 export function generateMixedQuestion(
   lang: Language,
-  pool: DMItem[]
+  pool: DMItem[],
+  item: DMItem = randomItem(pool)
 ): Question {
   const questionTypes: ('ref' | 'cloze' | 'ace')[] = ['ref', 'cloze', 'ace'];
   const type = randomItem(questionTypes);
 
   switch (type) {
     case 'ref':
-      return generateReferenceQuestion(lang, pool);
+      return generateReferenceQuestion(lang, pool, item);
     case 'cloze':
-      return generateClozeQuestion(lang, pool);
+      return generateClozeQuestion(lang, pool, item);
     case 'ace':
-      return generateACEQuestion(lang, pool);
+      return generateACEQuestion(lang, pool, item);
     default:
-      return generateReferenceQuestion(lang, pool);
+      return generateReferenceQuestion(lang, pool, item);
   }
 }
 
@@ -158,36 +157,31 @@ export function generateQuestionSet(
   }
 
   const questions: Question[] = [];
-  const usedIds = new Set<string>();
+
+  // Deal one verse per question from a shuffled pool, so a verse only
+  // repeats when count exceeds the pool size
+  const order = shuffle(pool);
 
   for (let i = 0; i < count; i++) {
-    let question: Question;
-    let attempts = 0;
-    const maxAttempts = pool.length * 2;
+    const item = order[i % order.length];
 
-    do {
-      switch (mode) {
-        case 'reference_rush':
-          question = generateReferenceQuestion(lang, pool);
-          break;
-        case 'fill_verse':
-          question = generateClozeQuestion(lang, pool);
-          break;
-        case 'ace_match':
-          question = generateACEQuestion(lang, pool);
-          break;
-        case 'lightning_ladder':
-        case 'team_mode':
-          question = generateMixedQuestion(lang, pool);
-          break;
-        default:
-          question = generateReferenceQuestion(lang, pool);
-      }
-      attempts++;
-    } while (usedIds.has(question.meta.id) && attempts < maxAttempts);
-
-    usedIds.add(question.meta.id);
-    questions.push(question);
+    switch (mode) {
+      case 'reference_rush':
+        questions.push(generateReferenceQuestion(lang, pool, item));
+        break;
+      case 'fill_verse':
+        questions.push(generateClozeQuestion(lang, pool, item));
+        break;
+      case 'ace_match':
+        questions.push(generateACEQuestion(lang, pool, item));
+        break;
+      case 'lightning_ladder':
+      case 'team_mode':
+        questions.push(generateMixedQuestion(lang, pool, item));
+        break;
+      default:
+        questions.push(generateReferenceQuestion(lang, pool, item));
+    }
   }
 
   return questions;
