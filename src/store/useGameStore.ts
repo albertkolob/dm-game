@@ -66,7 +66,6 @@ interface GameState {
   lastPlayedDate: string | null;
   totalVersesStudied: number;
   updateDayStreak: () => void;
-  incrementVersesStudied: (count: number) => void;
 
   // Questions pool for current game
   questionsPool: Question[];
@@ -77,11 +76,9 @@ export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
       // Language
+      // The 'dm-game-language' localStorage key is owned by src/i18n (read at bootstrap)
       language: 'en',
-      setLanguage: (lang) => {
-        localStorage.setItem('dm-game-language', lang);
-        set({ language: lang });
-      },
+      setLanguage: (lang) => set({ language: lang }),
 
       // Selected set
       selectedIds: PRESETS.all_dm,
@@ -155,12 +152,16 @@ export const useGameStore = create<GameState>()(
           currentQuestion: questions[0] || null,
         }),
 
-      endGame: () =>
+      endGame: () => {
+        const { isPlaying, results, totalVersesStudied } = get();
+        if (!isPlaying) return; // already ended; don't record stats twice
         set({
           isPlaying: false,
           isPaused: false,
           currentQuestion: null,
-        }),
+          totalVersesStudied: totalVersesStudied + results.length,
+        });
+      },
 
       pauseGame: () => set({ isPaused: true }),
       resumeGame: () => set({ isPaused: false }),
@@ -172,7 +173,7 @@ export const useGameStore = create<GameState>()(
         const nextIndex = questionIndex + 1;
 
         if (nextIndex >= questionsPool.length) {
-          set({ isPlaying: false, currentQuestion: null });
+          get().endGame();
           return;
         }
 
@@ -230,7 +231,8 @@ export const useGameStore = create<GameState>()(
       loseLife: () => {
         const { lives } = get();
         if (lives <= 1) {
-          set({ lives: 0, isPlaying: false });
+          set({ lives: 0 });
+          get().endGame();
         } else {
           set({ lives: lives - 1 });
         }
@@ -261,9 +263,6 @@ export const useGameStore = create<GameState>()(
           set({ dayStreak: 1, lastPlayedDate: today });
         }
       },
-
-      incrementVersesStudied: (count) =>
-        set((state) => ({ totalVersesStudied: state.totalVersesStudied + count })),
 
       // Questions pool
       questionsPool: [],

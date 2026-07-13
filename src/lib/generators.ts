@@ -2,13 +2,6 @@ import { DMItem, Question, Language, ACE } from '@/data/types';
 import { shuffle, randomItem } from './utils';
 
 /**
- * Build a pool of items from the master list based on selected IDs
- */
-export function buildPool(allItems: DMItem[], ids: string[]): DMItem[] {
-  return allItems.filter((item) => ids.includes(item.id));
-}
-
-/**
  * Generate a Reference Rush question
  * Shows key phrase, player picks the correct reference
  */
