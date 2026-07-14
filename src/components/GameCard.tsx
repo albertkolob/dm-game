@@ -26,6 +26,12 @@ const MODE_LABEL_KEY: Record<GameMode, string> = {
   team_mode: 'modes.teamMode',
 };
 
+const ACE_DESC_KEY: Record<ACE, string> = {
+  act_in_faith: 'ace.actInFaithDesc',
+  eternal_perspective: 'ace.eternalPerspectiveDesc',
+  divinely_appointed_sources: 'ace.divinelyAppointedSourcesDesc',
+};
+
 function PointsFloater({ show, points }: { show: boolean; points: number }) {
   if (!show || points <= 0) return null;
   return (
@@ -107,8 +113,9 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
   const handleACESubmit = () => {
     if (!selectedACE || !selectedVerse || isRevealed) return;
 
-    const aceCorrect = selectedACE === question.correctACE;
-    const verseCorrect = selectedVerse === question.correctVerse;
+    // Any linked principle / any verse sharing it counts as correct
+    const aceCorrect = question.correctACEs?.includes(selectedACE) ?? false;
+    const verseCorrect = question.correctVerses?.includes(selectedVerse) ?? false;
     const fullCorrect = aceCorrect && verseCorrect;
     const partial = aceCorrect || verseCorrect;
 
@@ -239,53 +246,68 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
         <div className="space-y-2">
           <p className="text-[11px] font-bold theme-label text-muted-foreground">{t('game.chooseACE')}</p>
           <div className="grid gap-2">
-            {question.optionsACE?.map((ace) => (
-              <motion.button
-                key={ace}
-                whileTap={{ scale: isRevealed ? 1 : 0.98 }}
-                onClick={() => handleACESelect(ace as ACE)}
-                disabled={isRevealed}
-                className={cn(
-                  'w-full p-3 rounded-xl text-left font-semibold transition-all tap-target border-2',
-                  !isRevealed && selectedACE === ace && 'bg-primary/15 border-primary',
-                  !isRevealed && selectedACE !== ace && 'bg-secondary border-transparent',
-                  isRevealed && ace === question.correctACE && 'bg-success/15 border-success',
-                  isRevealed && selectedACE === ace && ace !== question.correctACE && 'bg-destructive/10 border-destructive'
-                )}
-              >
-                {ACE_NAMES[ace as ACE][language]}
-              </motion.button>
-            ))}
+            {question.optionsACE?.map((ace) => {
+              const isLinked = question.correctACEs?.includes(ace) ?? false;
+              return (
+                <motion.button
+                  key={ace}
+                  data-testid="ace-option"
+                  whileTap={{ scale: isRevealed ? 1 : 0.98 }}
+                  onClick={() => handleACESelect(ace as ACE)}
+                  disabled={isRevealed}
+                  className={cn(
+                    'w-full p-3 rounded-xl text-left transition-all tap-target border-2',
+                    !isRevealed && selectedACE === ace && 'bg-primary/15 border-primary',
+                    !isRevealed && selectedACE !== ace && 'bg-secondary border-transparent',
+                    isRevealed && isLinked && 'bg-success/15 border-success',
+                    isRevealed && selectedACE === ace && !isLinked && 'bg-destructive/10 border-destructive'
+                  )}
+                >
+                  <span className="font-semibold block">{ACE_NAMES[ace as ACE][language]}</span>
+                  <span className="text-xs text-muted-foreground block mt-0.5">
+                    {t(ACE_DESC_KEY[ace as ACE])}
+                  </span>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
 
         {/* Verse Selection */}
         <div className="space-y-2">
-          <p className="text-[11px] font-bold theme-label text-muted-foreground">{t('game.chooseVerse')}</p>
+          <p className="text-[11px] font-bold theme-label text-muted-foreground">
+            {question.acePrimary
+              ? t('game.chooseVerseFor', { principle: ACE_NAMES[question.acePrimary as ACE][language] })
+              : t('game.chooseVerse')}
+          </p>
           <div className="grid gap-2">
-            {question.optionsVerse?.map((verse, index) => (
-              <motion.button
-                key={verse}
-                whileTap={{ scale: isRevealed ? 1 : 0.98 }}
-                onClick={() => handleVerseSelect(verse)}
-                disabled={isRevealed}
-                className={cn(
-                  'w-full p-3 rounded-xl text-left font-semibold transition-all tap-target border-2 flex items-center gap-3',
-                  !isRevealed && selectedVerse === verse && 'bg-primary/15 border-primary',
-                  !isRevealed && selectedVerse !== verse && 'bg-secondary border-transparent',
-                  isRevealed && verse === question.correctVerse && 'bg-success/15 border-success',
-                  isRevealed && selectedVerse === verse && verse !== question.correctVerse && 'bg-destructive/10 border-destructive'
-                )}
-              >
-                <span
-                  className="w-7 h-7 rounded-lg text-sm font-bold flex items-center justify-center shrink-0 border bg-primary/10 border-primary/50 text-primary"
-                  aria-hidden="true"
+            {question.optionsVerse?.map((verse, index) => {
+              const isSupporting = question.correctVerses?.includes(verse) ?? false;
+              return (
+                <motion.button
+                  key={verse}
+                  data-testid="verse-option"
+                  whileTap={{ scale: isRevealed ? 1 : 0.98 }}
+                  onClick={() => handleVerseSelect(verse)}
+                  disabled={isRevealed}
+                  className={cn(
+                    'w-full p-3 rounded-xl text-left font-semibold transition-all tap-target border-2 flex items-center gap-3',
+                    !isRevealed && selectedVerse === verse && 'bg-primary/15 border-primary',
+                    !isRevealed && selectedVerse !== verse && 'bg-secondary border-transparent',
+                    isRevealed && isSupporting && 'bg-success/15 border-success',
+                    isRevealed && selectedVerse === verse && !isSupporting && 'bg-destructive/10 border-destructive'
+                  )}
                 >
-                  {LETTERS[index]}
-                </span>
-                {verse}
-              </motion.button>
-            ))}
+                  <span
+                    className="w-7 h-7 rounded-lg text-sm font-bold flex items-center justify-center shrink-0 border bg-primary/10 border-primary/50 text-primary"
+                    aria-hidden="true"
+                  >
+                    {LETTERS[index]}
+                  </span>
+                  {verse}
+                </motion.button>
+              );
+            })}
           </div>
         </div>
 

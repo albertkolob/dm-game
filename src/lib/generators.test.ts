@@ -8,7 +8,7 @@ import {
 } from './generators';
 import { DMItem, ACE } from '@/data/types';
 
-function makeItem(n: number, ace: ACE = 'act_in_faith'): DMItem {
+function makeItem(n: number, aces: ACE[] = ['act_in_faith']): DMItem {
   return {
     id: `item-${n}`,
     work: 'BOM',
@@ -17,7 +17,7 @@ function makeItem(n: number, ace: ACE = 'act_in_faith'): DMItem {
     keyPhrase: { en: `phrase en ${n}`, es: `phrase es ${n}`, pt: `phrase pt ${n}` },
     cloze: { en: `cloze en ${n}`, es: `cloze es ${n}`, pt: `cloze pt ${n}` },
     tags: [],
-    aceLinks: [ace],
+    aceLinks: aces,
   };
 }
 
@@ -58,16 +58,60 @@ describe('generateClozeQuestion', () => {
 });
 
 describe('generateACEQuestion', () => {
-  it('sets correctACE from the item and correctVerse to its reference', () => {
-    for (let i = 0; i < 20; i++) {
-      const q = generateACEQuestion('en', pool);
-      const item = pool.find((it) => it.id === q.meta.id)!;
-      expect(q.type).toBe('ace');
-      expect(q.correctACE).toBe(item.aceLinks[0]);
-      expect(q.correctVerse).toBe(item.reference);
-      expect(q.optionsVerse).toContain(item.reference);
+  it('accepts every principle the verse is linked to', () => {
+    const multiPool = [
+      makeItem(1, ['act_in_faith', 'eternal_perspective']),
+      makeItem(2, ['act_in_faith']),
+      makeItem(3, ['divinely_appointed_sources']),
+      makeItem(4, ['eternal_perspective']),
+    ];
+    const q = generateACEQuestion('en', multiPool, multiPool[0]);
+    expect(q.correctACEs).toEqual(['act_in_faith', 'eternal_perspective']);
+    expect(q.acePrimary).toBe('act_in_faith');
+  });
+
+  it('asks for a DIFFERENT verse sharing the principle when one exists', () => {
+    const p = [
+      makeItem(1, ['act_in_faith']),
+      makeItem(2, ['act_in_faith']), // the only possible partner
+      makeItem(3, ['divinely_appointed_sources']),
+      makeItem(4, ['eternal_perspective']),
+      makeItem(5, ['eternal_perspective']),
+    ];
+    for (let i = 0; i < 15; i++) {
+      const q = generateACEQuestion('en', p, p[0]);
       expect(q.optionsVerse).toHaveLength(4);
+      // the source verse is not the answer to its own question
+      expect(q.optionsVerse).not.toContain(p[0].reference);
+      expect(q.correctVerses).toEqual([p[1].reference]);
     }
+  });
+
+  it('counts any offered verse that shares the principle as correct', () => {
+    const p = [
+      makeItem(1, ['act_in_faith']),
+      makeItem(2, ['act_in_faith']),
+      makeItem(3, ['act_in_faith']),
+      makeItem(4, ['act_in_faith']),
+      makeItem(5, ['divinely_appointed_sources']),
+    ];
+    const q = generateACEQuestion('en', p, p[0]);
+    for (const verse of q.correctVerses!) {
+      const owner = p.find((it) => it.reference === verse)!;
+      expect(owner.aceLinks).toContain('act_in_faith');
+    }
+    expect(q.correctVerses!.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('falls back to the source verse when no partner shares the principle', () => {
+    const p = [
+      makeItem(1, ['divinely_appointed_sources']),
+      makeItem(2, ['act_in_faith']),
+      makeItem(3, ['act_in_faith']),
+      makeItem(4, ['eternal_perspective']),
+    ];
+    const q = generateACEQuestion('en', p, p[0]);
+    expect(q.correctVerses).toContain(p[0].reference);
   });
 });
 

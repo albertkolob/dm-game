@@ -71,11 +71,12 @@
     "resume": "Continuar",
     "quit": "Sair",
     "timeUp": "Tempo Esgotado!",
-    "chooseACE": "Escolha o Princípio ACE",
+    "chooseACE": "Qual princípio este versículo apoia?",
     "chooseVerse": "Escolha o Versículo de Apoio",
     "acePrompt": "Escolha ACE + um versículo que apoie aplicar esta verdade hoje.",
     "combo": "Combo ×{{multiplier}}",
-    "hit": "acerto"
+    "hit": "acerto",
+    "chooseVerseFor": "Qual versículo também apoia {{principle}}?"
   },
   "results": {
     "title": "Resultados",

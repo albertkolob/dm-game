@@ -47,6 +47,7 @@ interface GameState {
   score: number;
   streak: number;
   bestStreak: number;
+  teamStreaks: Record<string, number>;
   fastAnswers: number;
   lastPointsEarned: number;
   timeRemaining: number;
@@ -132,6 +133,7 @@ export const useGameStore = create<GameState>()(
       score: 0,
       streak: 0,
       bestStreak: 0,
+      teamStreaks: {},
       fastAnswers: 0,
       lastPointsEarned: 0,
       timeRemaining: 20,
@@ -169,6 +171,7 @@ export const useGameStore = create<GameState>()(
           score: 0,
           streak: 0,
           bestStreak: 0,
+          teamStreaks: {},
           fastAnswers: 0,
           lastPointsEarned: 0,
           timeRemaining: get().settings.timePerQuestion,
@@ -231,10 +234,13 @@ export const useGameStore = create<GameState>()(
           return;
         }
 
-        // In team mode, rotate to next team
+        // In team mode, rotate to next team and surface ITS combo streak
         if (isTeamMode && teams.length > 1) {
           const nextTeamIndex = (currentTeamIndex + 1) % teams.length;
-          set({ currentTeamIndex: nextTeamIndex });
+          set({
+            currentTeamIndex: nextTeamIndex,
+            streak: get().teamStreaks[teams[nextTeamIndex].id] ?? 0,
+          });
         }
 
         set({
@@ -246,26 +252,35 @@ export const useGameStore = create<GameState>()(
       },
 
       answerQuestion: ({ correct, partial, timeSpent }) => {
-        const { streak, bestStreak, fastAnswers, isTeamMode, teams, currentTeamIndex, settings } = get();
+        const { streak, bestStreak, fastAnswers, isTeamMode, teams, currentTeamIndex, settings, teamStreaks } = get();
         const teamRound = isTeamMode && teams.length > 1;
+        const teamId = teamRound ? teams[currentTeamIndex].id : null;
+        // Combos are per team in team battles — a team never inherits another's streak
+        const activeStreak = teamId ? (teamStreaks[teamId] ?? 0) : streak;
         const fast = timeSpent <= SPEED_WINDOW_SECONDS;
+
+        const setStreak = (value: number) =>
+          set({
+            streak: value,
+            ...(teamId ? { teamStreaks: { ...get().teamStreaks, [teamId]: value } } : {}),
+          });
 
         // Freeze the timer while the feedback screen is showing
         set({ hasAnswered: true });
 
         if (correct) {
-          const newStreak = streak + 1;
+          const newStreak = activeStreak + 1;
           const multiplier = settings.enableCombos ? comboMultiplier(newStreak) : 1;
           let points = COMBO_BASE * multiplier;
-          if (teamRound && fast) points += SPEED_BONUS_TEAM;
+          if (teamRound && fast && settings.enableCombos) points += SPEED_BONUS_TEAM;
 
-          if (teamRound) {
-            get().updateTeamScore(teams[currentTeamIndex].id, points);
+          if (teamId) {
+            get().updateTeamScore(teamId, points);
           }
 
+          setStreak(newStreak);
           set({
             score: get().score + points,
-            streak: newStreak,
             bestStreak: Math.max(newStreak, bestStreak),
             fastAnswers: fast && !teamRound ? fastAnswers + 1 : fastAnswers,
             lastPointsEarned: points,
@@ -277,16 +292,17 @@ export const useGameStore = create<GameState>()(
           }
         } else if (partial) {
           // ACE: one of the two picks right — consolation points, combo resets
-          if (teamRound) {
-            get().updateTeamScore(teams[currentTeamIndex].id, ACE_PARTIAL_POINTS);
+          if (teamId) {
+            get().updateTeamScore(teamId, ACE_PARTIAL_POINTS);
           }
+          setStreak(0);
           set({
             score: get().score + ACE_PARTIAL_POINTS,
-            streak: 0,
             lastPointsEarned: ACE_PARTIAL_POINTS,
           });
         } else {
-          set({ streak: 0, lastPointsEarned: 0 });
+          setStreak(0);
+          set({ lastPointsEarned: 0 });
 
           if (get().currentMode === 'lightning_ladder') {
             get().loseLife();

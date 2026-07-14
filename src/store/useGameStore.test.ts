@@ -268,7 +268,28 @@ describe('team mode', () => {
     useGameStore.getState().nextQuestion();
     expect(useGameStore.getState().currentTeamIndex).toBe(1);
 
+    // Combos are per team: B starts at x1, it does NOT inherit A's streak
     useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
-    expect(useGameStore.getState().teams[1].score).toBe(20); // combo carried to x2
+    expect(useGameStore.getState().teams[1].score).toBe(10);
+  });
+
+  it('resumes each team its own combo streak on its next turn', () => {
+    const teams = [
+      { id: 't1', name: 'A', score: 0, color: '#fff' },
+      { id: 't2', name: 'B', score: 0, color: '#000' },
+    ];
+    useGameStore.getState().setTeams(teams);
+    useGameStore.getState().setIsTeamMode(true);
+    useGameStore.getState().startGame('team_mode', [1, 2, 3, 4].map(makeQuestion));
+
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW }); // A x1 = 10
+    useGameStore.getState().nextQuestion();
+    useGameStore.getState().answerQuestion({ correct: false, ...SLOW }); // B misses
+    useGameStore.getState().nextQuestion();
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW }); // A resumes x2 = 20
+
+    const s = useGameStore.getState();
+    expect(s.teams[0].score).toBe(30);
+    expect(s.teams[1].score).toBe(0);
   });
 });
