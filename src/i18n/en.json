@@ -135,7 +135,9 @@
     "acePrompt": "Choose ACE + a verse that supports acting on this truth today.",
     "combo": "Combo ×{{multiplier}}",
     "hit": "hit",
-    "chooseVerseFor": "Which verse also supports {{principle}}?"
+    "chooseVerseFor": "Which verse also supports {{principle}}?",
+    "chooseACEScenario": "Which principle is being used?",
+    "chooseVerseForScenario": "Which verse supports {{principle}}?"
   },
   "results": {
     "title": "Results",

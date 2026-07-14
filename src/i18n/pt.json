@@ -76,7 +76,9 @@
     "acePrompt": "Escolha ACE + um versículo que apoie aplicar esta verdade hoje.",
     "combo": "Combo ×{{multiplier}}",
     "hit": "acerto",
-    "chooseVerseFor": "Qual versículo também apoia {{principle}}?"
+    "chooseVerseFor": "Qual versículo também apoia {{principle}}?",
+    "chooseACEScenario": "Qual princípio está sendo usado?",
+    "chooseVerseForScenario": "Qual versículo apoia {{principle}}?"
   },
   "results": {
     "title": "Resultados",

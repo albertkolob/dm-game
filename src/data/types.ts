@@ -34,6 +34,8 @@ export interface Question {
   optionsVerse?: string[];
   /** every offered verse that supports acePrimary counts as correct */
   correctVerses?: string[];
+  /** true when the prompt is an application scenario, not a verse quote */
+  aceScenario?: boolean;
   meta: {
     id: string;
     ref?: string;

@@ -244,7 +244,9 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
 
         {/* ACE Selection */}
         <div className="space-y-2">
-          <p className="text-[11px] font-bold theme-label text-muted-foreground">{t('game.chooseACE')}</p>
+          <p className="text-[11px] font-bold theme-label text-muted-foreground">
+            {question.aceScenario ? t('game.chooseACEScenario') : t('game.chooseACE')}
+          </p>
           <div className="grid gap-2">
             {question.optionsACE?.map((ace) => {
               const isLinked = question.correctACEs?.includes(ace) ?? false;
@@ -277,7 +279,9 @@ export function GameCard({ question, onAnswer, onNext }: GameCardProps) {
         <div className="space-y-2">
           <p className="text-[11px] font-bold theme-label text-muted-foreground">
             {question.acePrimary
-              ? t('game.chooseVerseFor', { principle: ACE_NAMES[question.acePrimary as ACE][language] })
+              ? t(question.aceScenario ? 'game.chooseVerseForScenario' : 'game.chooseVerseFor', {
+                  principle: ACE_NAMES[question.acePrimary as ACE][language],
+                })
               : t('game.chooseVerse')}
           </p>
           <div className="grid gap-2">
