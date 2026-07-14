@@ -3,9 +3,11 @@ import {
   generateReferenceQuestion,
   generateClozeQuestion,
   generateACEQuestion,
+  generateScenarioQuestion,
   generateQuestionSet,
   applyFiftyFifty,
 } from './generators';
+import { ACE_SCENARIOS } from '@/data/ace-scenarios';
 import { DMItem, ACE } from '@/data/types';
 
 function makeItem(n: number, aces: ACE[] = ['act_in_faith']): DMItem {
@@ -112,6 +114,48 @@ describe('generateACEQuestion', () => {
     ];
     const q = generateACEQuestion('en', p, p[0]);
     expect(q.correctVerses).toContain(p[0].reference);
+  });
+});
+
+describe('generateScenarioQuestion', () => {
+  const scenario = ACE_SCENARIOS.find((s) => s.principle === 'act_in_faith')!;
+
+  it('builds a scenario question with the single scenario principle', () => {
+    const q = generateScenarioQuestion('en', pool, scenario)!;
+    expect(q).not.toBeNull();
+    expect(q.aceScenario).toBe(true);
+    expect(q.prompt).toBe(scenario.text.en);
+    expect(q.correctACEs).toEqual(['act_in_faith']);
+    expect(q.acePrimary).toBe('act_in_faith');
+  });
+
+  it('offers 4 verses and accepts every one that supports the principle', () => {
+    const q = generateScenarioQuestion('en', pool, scenario)!;
+    expect(q.optionsVerse).toHaveLength(4);
+    for (const verse of q.correctVerses!) {
+      const owner = pool.find((it) => it.reference === verse)!;
+      expect(owner.aceLinks).toContain('act_in_faith');
+    }
+    expect(q.correctVerses!.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('anchors its meta to a real verse for progress tracking', () => {
+    const q = generateScenarioQuestion('en', pool, scenario)!;
+    expect(pool.some((it) => it.id === q.meta.id)).toBe(true);
+  });
+
+  it('returns null when no pool verse matches the scenario principle', () => {
+    const dasOnly = ACE_SCENARIOS.find((s) => s.principle === 'divinely_appointed_sources')!;
+    const p = [1, 2, 3, 4].map((n) => makeItem(n, ['eternal_perspective']));
+    expect(generateScenarioQuestion('en', p, dasOnly)).toBeNull();
+  });
+
+  it('appears in ace_match question sets alongside verse questions', () => {
+    const questions = generateQuestionSet('en', pool, 'ace_match', 6);
+    expect(questions).toHaveLength(6);
+    expect(questions.every((q) => q.type === 'ace')).toBe(true);
+    expect(questions.some((q) => q.aceScenario)).toBe(true);
+    expect(questions.some((q) => !q.aceScenario)).toBe(true);
   });
 });
 

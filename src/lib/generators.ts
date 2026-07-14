@@ -1,4 +1,5 @@
 import { DMItem, Question, Language, ACE } from '@/data/types';
+import { ACE_SCENARIOS, AceScenario } from '@/data/ace-scenarios';
 import { shuffle, randomItem } from './utils';
 
 /**
@@ -139,6 +140,70 @@ export function generateACEQuestion(
 }
 
 /**
+ * Generate a scenario-based ACE question: a real-life situation where a
+ * student applies a principle. Step 1: name the principle; step 2: pick a
+ * verse that supports it. Returns null when the pool has no verse linked
+ * to any scenario's principle.
+ */
+export function generateScenarioQuestion(
+  lang: Language,
+  pool: DMItem[],
+  scenario?: AceScenario
+): Question | null {
+  if (pool.length < 4) {
+    throw new Error('Pool must have at least 4 items');
+  }
+
+  const usable = ACE_SCENARIOS.filter((s) =>
+    pool.some((item) => item.aceLinks.includes(s.principle))
+  );
+  const chosen = scenario ?? (usable.length > 0 ? randomItem(usable) : undefined);
+  if (!chosen || !pool.some((item) => item.aceLinks.includes(chosen.principle))) {
+    return null;
+  }
+
+  const aceOptions: ACE[] = [
+    'act_in_faith',
+    'eternal_perspective',
+    'divinely_appointed_sources',
+  ];
+
+  const supporting = pool.filter((item) => item.aceLinks.includes(chosen.principle));
+  const anchor = randomItem(supporting);
+  const nonMatching = shuffle(
+    pool.filter((item) => item.id !== anchor.id && !item.aceLinks.includes(chosen.principle))
+  );
+  let distractors = nonMatching.slice(0, 3);
+  if (distractors.length < 3) {
+    const fillers = shuffle(
+      pool.filter((item) => item.id !== anchor.id && !distractors.includes(item))
+    );
+    distractors = [...distractors, ...fillers.slice(0, 3 - distractors.length)];
+  }
+
+  const optionItems = shuffle([anchor, ...distractors]);
+  const correctVerses = optionItems
+    .filter((item) => item.aceLinks.includes(chosen.principle))
+    .map((item) => item.reference);
+
+  return {
+    type: 'ace',
+    aceScenario: true,
+    prompt: chosen.text[lang],
+    optionsACE: aceOptions,
+    correctACEs: [chosen.principle],
+    acePrimary: chosen.principle,
+    optionsVerse: optionItems.map((item) => item.reference),
+    correctVerses,
+    meta: {
+      // Credit the anchor verse so crowns/mastery/review track a real passage
+      id: anchor.id,
+      ref: anchor.reference,
+    },
+  };
+}
+
+/**
  * Generate a mixed question for Lightning Ladder
  */
 export function generateMixedQuestion(
@@ -199,9 +264,12 @@ export function generateQuestionSet(
       case 'fill_verse':
         questions.push(generateClozeQuestion(lang, pool, item));
         break;
-      case 'ace_match':
-        questions.push(generateACEQuestion(lang, pool, item));
+      case 'ace_match': {
+        // Alternate verse-based and scenario-based questions
+        const scenarioQuestion = i % 2 === 1 ? generateScenarioQuestion(lang, pool) : null;
+        questions.push(scenarioQuestion ?? generateACEQuestion(lang, pool, item));
         break;
+      }
       case 'lightning_ladder':
       case 'team_mode':
         questions.push(generateMixedQuestion(lang, pool, item));
