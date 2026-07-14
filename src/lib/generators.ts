@@ -150,7 +150,8 @@ export function generateQuestionSet(
   lang: Language,
   pool: DMItem[],
   mode: 'reference_rush' | 'fill_verse' | 'ace_match' | 'lightning_ladder' | 'team_mode',
-  count: number
+  count: number,
+  focusId?: string
 ): Question[] {
   if (pool.length < 4) {
     throw new Error('Pool must have at least 4 items for question generation');
@@ -160,7 +161,15 @@ export function generateQuestionSet(
 
   // Deal one verse per question from a shuffled pool, so a verse only
   // repeats when count exceeds the pool size
-  const order = shuffle(pool);
+  let order = shuffle(pool);
+
+  // Daily quest: guarantee the featured verse appears (first question)
+  if (focusId) {
+    const focusIndex = order.findIndex((item) => item.id === focusId);
+    if (focusIndex > 0) {
+      order = [order[focusIndex], ...order.slice(0, focusIndex), ...order.slice(focusIndex + 1)];
+    }
+  }
 
   for (let i = 0; i < count; i++) {
     const item = order[i % order.length];
@@ -185,32 +194,6 @@ export function generateQuestionSet(
   }
 
   return questions;
-}
-
-/**
- * Calculate points for a correct answer
- */
-export function calculatePoints(
-  mode: 'reference_rush' | 'fill_verse' | 'ace_match' | 'lightning_ladder' | 'team_mode',
-  isCorrect: boolean,
-  isPartial: boolean = false
-): number {
-  if (!isCorrect && !isPartial) {
-    return mode === 'reference_rush' || mode === 'fill_verse' ? -25 : 0;
-  }
-
-  switch (mode) {
-    case 'reference_rush':
-    case 'fill_verse':
-      return 100;
-    case 'ace_match':
-      return isPartial ? 50 : 100;
-    case 'lightning_ladder':
-    case 'team_mode':
-      return 100;
-    default:
-      return 100;
-  }
 }
 
 /**

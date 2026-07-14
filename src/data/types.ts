@@ -57,6 +57,7 @@ export interface GameSettings {
   enableSound: boolean;
   enableHaptics: boolean;
   showHints: boolean;
+  enableCombos: boolean;
 }
 
 export const WORK_NAMES: Record<Work, LocalizedText> = {

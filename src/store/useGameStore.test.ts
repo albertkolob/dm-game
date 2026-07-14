@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useGameStore } from './useGameStore';
+import { useProgressStore } from './useProgressStore';
 import { Question, GameResult } from '@/data/types';
+
+const SLOW = { timeSpent: 10 }; // outside the 5s speed window
 
 function makeQuestion(n: number): Question {
   return {
@@ -24,9 +27,11 @@ function makeResult(n: number, correct = true): GameResult {
 
 const questions = [1, 2, 3].map(makeQuestion);
 const initialState = useGameStore.getState();
+const initialProgress = useProgressStore.getState();
 
 beforeEach(() => {
   useGameStore.setState(initialState, true);
+  useProgressStore.setState(initialProgress, true);
 });
 
 describe('startGame', () => {
@@ -48,37 +53,76 @@ describe('startGame', () => {
   });
 });
 
-describe('answerQuestion', () => {
-  it('adds points and grows the streak on correct answers', () => {
+describe('answerQuestion (combo scoring)', () => {
+  it('scores 10 x combo multiplier on consecutive correct answers', () => {
     useGameStore.getState().startGame('reference_rush', questions);
-    useGameStore.getState().answerQuestion(true, 100);
-    useGameStore.getState().answerQuestion(true, 100);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW }); // x1 = 10
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW }); // x2 = 20
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW }); // x3 = 30
     const s = useGameStore.getState();
-    expect(s.score).toBe(200);
-    expect(s.streak).toBe(2);
-    expect(s.bestStreak).toBe(2);
+    expect(s.score).toBe(60);
+    expect(s.streak).toBe(3);
+    expect(s.bestStreak).toBe(3);
+    expect(s.lastPointsEarned).toBe(30);
   });
 
-  it('adds a +10 bonus on every 5th streak answer', () => {
+  it('caps the combo multiplier at x10', () => {
     useGameStore.getState().startGame('reference_rush', questions);
-    for (let i = 0; i < 5; i++) {
-      useGameStore.getState().answerQuestion(true, 100);
+    for (let i = 0; i < 12; i++) {
+      useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
     }
-    expect(useGameStore.getState().score).toBe(510);
+    // 10+20+...+100 for the first 10, then 100 each
+    expect(useGameStore.getState().score).toBe(550 + 200);
+  });
+
+  it('scores flat 10 per answer when combos are disabled', () => {
+    useGameStore.getState().updateSettings({ enableCombos: false });
+    useGameStore.getState().startGame('reference_rush', questions);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    expect(useGameStore.getState().score).toBe(20);
+  });
+
+  it('counts fast answers for the solo speed XP bonus', () => {
+    useGameStore.getState().startGame('reference_rush', questions);
+    useGameStore.getState().answerQuestion({ correct: true, timeSpent: 3 });
+    useGameStore.getState().answerQuestion({ correct: true, timeSpent: 9 });
+    expect(useGameStore.getState().fastAnswers).toBe(1);
+  });
+
+  it('awards +50 speed bonus points to the active team on fast answers', () => {
+    useGameStore.getState().setTeams([
+      { id: 't1', name: 'A', score: 0, color: '#fff' },
+      { id: 't2', name: 'B', score: 0, color: '#000' },
+    ]);
+    useGameStore.getState().setIsTeamMode(true);
+    useGameStore.getState().startGame('team_mode', questions);
+    useGameStore.getState().answerQuestion({ correct: true, timeSpent: 2 });
+    expect(useGameStore.getState().teams[0].score).toBe(60); // 10 x1 + 50
+  });
+
+  it('gives partial ACE credit without advancing the combo', () => {
+    useGameStore.getState().startGame('ace_match', questions);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    useGameStore.getState().answerQuestion({ correct: false, partial: true, ...SLOW });
+    const s = useGameStore.getState();
+    expect(s.score).toBe(10 + 15);
+    expect(s.streak).toBe(0);
   });
 
   it('resets the streak on a wrong answer but keeps bestStreak', () => {
     useGameStore.getState().startGame('reference_rush', questions);
-    useGameStore.getState().answerQuestion(true, 100);
-    useGameStore.getState().answerQuestion(false, 0);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    useGameStore.getState().answerQuestion({ correct: false, ...SLOW });
     const s = useGameStore.getState();
     expect(s.streak).toBe(0);
     expect(s.bestStreak).toBe(1);
+    expect(s.lastPointsEarned).toBe(0);
   });
 
   it('costs a life in lightning ladder on a wrong answer', () => {
     useGameStore.getState().startGame('lightning_ladder', questions);
-    useGameStore.getState().answerQuestion(false, 0);
+    useGameStore.getState().answerQuestion({ correct: false, ...SLOW });
     expect(useGameStore.getState().lives).toBe(2);
   });
 
@@ -86,7 +130,7 @@ describe('answerQuestion', () => {
     useGameStore.getState().startGame('lightning_ladder', questions);
     for (let i = 0; i < 3; i++) {
       useGameStore.getState().addResult(makeResult(i, false));
-      useGameStore.getState().answerQuestion(false, 0);
+      useGameStore.getState().answerQuestion({ correct: false, ...SLOW });
     }
     const s = useGameStore.getState();
     expect(s.lives).toBe(0);
@@ -147,7 +191,7 @@ describe('hasAnswered (timer pause during feedback)', () => {
     useGameStore.getState().startGame('reference_rush', questions);
     expect(useGameStore.getState().hasAnswered).toBe(false);
 
-    useGameStore.getState().answerQuestion(true, 100);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
     expect(useGameStore.getState().hasAnswered).toBe(true);
 
     useGameStore.getState().nextQuestion();
@@ -156,13 +200,13 @@ describe('hasAnswered (timer pause during feedback)', () => {
 
   it('is set on wrong answers too', () => {
     useGameStore.getState().startGame('reference_rush', questions);
-    useGameStore.getState().answerQuestion(false, 0);
+    useGameStore.getState().answerQuestion({ correct: false, ...SLOW });
     expect(useGameStore.getState().hasAnswered).toBe(true);
   });
 
   it('resets when a new game starts', () => {
     useGameStore.getState().startGame('reference_rush', questions);
-    useGameStore.getState().answerQuestion(true, 100);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
     useGameStore.getState().startGame('reference_rush', questions);
     expect(useGameStore.getState().hasAnswered).toBe(false);
   });
@@ -218,13 +262,13 @@ describe('team mode', () => {
     useGameStore.getState().setIsTeamMode(true);
     useGameStore.getState().startGame('team_mode', questions);
 
-    useGameStore.getState().answerQuestion(true, 100);
-    expect(useGameStore.getState().teams[0].score).toBe(100);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    expect(useGameStore.getState().teams[0].score).toBe(10);
 
     useGameStore.getState().nextQuestion();
     expect(useGameStore.getState().currentTeamIndex).toBe(1);
 
-    useGameStore.getState().answerQuestion(true, 100);
-    expect(useGameStore.getState().teams[1].score).toBe(100);
+    useGameStore.getState().answerQuestion({ correct: true, ...SLOW });
+    expect(useGameStore.getState().teams[1].score).toBe(20); // combo carried to x2
   });
 });

@@ -18,8 +18,17 @@
     "streak": "Sequência",
     "dayStreak": "dias de sequência",
     "versesStudied": "versículos estudados",
-    "selectMode": "Selecione um Modo de Jogo",
-    "selectSet": "Selecione um Conjunto"
+    "selectMode": "Escolha seu modo",
+    "selectSet": "Selecione um Conjunto",
+    "greeting": "Olá, {{name}}!",
+    "mastery": "Domínio das obras-padrão",
+    "classroomBattle": "Batalha de classe",
+    "needVerses": "Selecione pelo menos 4 versículos para jogar",
+    "versesInSet": "versículos no seu conjunto",
+    "changeSet": "Mudar conjunto",
+    "notRanked": "Ainda sem classificação",
+    "bestCombo": "Melhor combo ×{{combo}}",
+    "bestScore": "Melhor {{score}}"
   },
   "modes": {
     "title": "Modos de Jogo",
@@ -64,7 +73,9 @@
     "timeUp": "Tempo Esgotado!",
     "chooseACE": "Escolha o Princípio ACE",
     "chooseVerse": "Escolha o Versículo de Apoio",
-    "acePrompt": "Escolha ACE + um versículo que apoie aplicar esta verdade hoje."
+    "acePrompt": "Escolha ACE + um versículo que apoie aplicar esta verdade hoje.",
+    "combo": "Combo ×{{multiplier}}",
+    "hit": "acerto"
   },
   "results": {
     "title": "Resultados",
@@ -74,10 +85,18 @@
     "bestStreak": "Melhor Sequência",
     "timeSpent": "Tempo Gasto",
     "reviewMisses": "Revisar Erros",
-    "playAgain": "Jogar Novamente",
-    "backHome": "Voltar ao Início",
+    "playAgain": "Jogar de Novo",
+    "backHome": "Início",
     "noMisses": "Perfeito! Sem erros nesta rodada.",
-    "missedVerses": "Versículos Errados"
+    "missedVerses": "Versículos Errados",
+    "roundComplete": "Rodada concluída",
+    "rankUp": "SUBIU DE RANQUE!",
+    "levelUp": "SUBIU DE NÍVEL!",
+    "reachedLevel": "Você alcançou o Nível {{level}} · {{title}}",
+    "bestCombo": "Melhor combo",
+    "speedBonus": "Bônus de velocidade",
+    "newBadges": "Novos emblemas",
+    "crownsEarned": "Coroas de versículos"
   },
   "team": {
     "title": "Modo Equipes",
@@ -91,11 +110,15 @@
     "currentTeam": "Equipe Atual",
     "winner": "Vencedor!",
     "tie": "Empate!",
-    "tapToReveal": "Capitão: Toque na resposta após a equipe decidir"
+    "tapToReveal": "Capitão: Toque na resposta após a equipe decidir",
+    "upNow": "É a vez",
+    "speedHype": "Responda em 5s para um bônus de velocidade +50",
+    "matchOver": "Pontuação final",
+    "winnerIs": "{{name}} venceu!"
   },
   "teacher": {
     "title": "Configurações do Professor",
-    "gameSettings": "Configurações do Jogo",
+    "gameSettings": "Ajustes",
     "timePerQuestion": "Tempo por Pergunta",
     "seconds": "segundos",
     "questionsPerRound": "Perguntas por Rodada",
@@ -108,7 +131,12 @@
     "teamSettings": "Configurações de Equipes",
     "enableTeamMode": "Habilitar Modo Equipes",
     "numberOfTeams": "Número de Equipes",
-    "showScoreboard": "Mostrar Placar"
+    "showScoreboard": "Mostrar Placar",
+    "gameSetup": "Configurar Jogo",
+    "console": "Console do professor",
+    "combos": "Combos e bônus de velocidade",
+    "verseSet": "Conjunto de versículos",
+    "change": "Mudar"
   },
   "setBuilder": {
     "title": "Construtor de Conjuntos",
@@ -171,5 +199,64 @@
     "scoreUpdated": "Pontuação atualizada",
     "questionNumber": "Número da pergunta",
     "selectOption": "Selecionar opção"
+  },
+  "quest": {
+    "daily": "Missão diária",
+    "master": "Domine {{ref}}",
+    "reward": "+50 XP · mantém sua sequência",
+    "done": "Feito hoje! +50 XP ganhos",
+    "go": "IR"
+  },
+  "progress": {
+    "level": "Nível"
+  },
+  "ranks": {
+    "bronze": "Bronze",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "platinum": "Platina"
+  },
+  "levelTitles": {
+    "novice": "Novato",
+    "learner": "Aprendiz",
+    "disciple": "Discípulo",
+    "scholar": "Erudito do Seminário",
+    "verseMaster": "Mestre dos Versículos",
+    "sage": "Sábio da Doutrina",
+    "legend": "Lenda"
+  },
+  "badges": {
+    "firstRound": "Primeira rodada",
+    "perfectRound": "Impecável",
+    "combo10": "Combo ×10",
+    "streak7": "Sequência de 7 dias",
+    "streak30": "Sequência de 30 dias",
+    "level5": "Nível 5",
+    "level10": "Nível 10",
+    "work90": "90% de domínio"
+  },
+  "themes": {
+    "appearance": "Aparência",
+    "equip": "Equipar",
+    "equipped": "Equipado",
+    "note": "Sua escolha fica salva localmente — nada sai do seu telefone.",
+    "neonName": "Neon Ascent",
+    "neonDesc": "HUD escuro · combos · ranques",
+    "questName": "Scripture Quest",
+    "questDesc": "Claro e divertido · fácil de ler ao ar livre",
+    "classicName": "Clássico",
+    "classicDesc": "O visual original · calmo e focado"
+  },
+  "profile": {
+    "title": "Perfil",
+    "badges": "Emblemas",
+    "saveProgress": "Salvar progresso neste telefone",
+    "saveProgressHint": "Desative para reiniciar a cada sessão",
+    "namePlaceholder": "Seu nome",
+    "changePhoto": "Mudar foto",
+    "eraseData": "Apagar todos os meus dados",
+    "eraseConfirm": "Apagar todo o progresso, emblemas e configurações deste telefone? Isso não pode ser desfeito.",
+    "privacyNote": "Nada sai do seu telefone",
+    "lockedBadge": "Emblema bloqueado"
   }
 }

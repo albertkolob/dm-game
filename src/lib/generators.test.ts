@@ -4,7 +4,6 @@ import {
   generateClozeQuestion,
   generateACEQuestion,
   generateQuestionSet,
-  calculatePoints,
   applyFiftyFifty,
 } from './generators';
 import { DMItem, ACE } from '@/data/types';
@@ -92,25 +91,12 @@ describe('generateQuestionSet', () => {
   it('throws when the pool has fewer than 4 items', () => {
     expect(() => generateQuestionSet('en', pool.slice(0, 2), 'reference_rush', 4)).toThrow();
   });
-});
 
-describe('calculatePoints', () => {
-  it('awards 100 for correct answers in every mode', () => {
-    expect(calculatePoints('reference_rush', true)).toBe(100);
-    expect(calculatePoints('fill_verse', true)).toBe(100);
-    expect(calculatePoints('ace_match', true)).toBe(100);
-    expect(calculatePoints('lightning_ladder', true)).toBe(100);
-  });
-
-  it('penalizes wrong answers in rush/fill modes only', () => {
-    expect(calculatePoints('reference_rush', false)).toBe(-25);
-    expect(calculatePoints('fill_verse', false)).toBe(-25);
-    expect(calculatePoints('ace_match', false)).toBe(0);
-    expect(calculatePoints('lightning_ladder', false)).toBe(0);
-  });
-
-  it('awards 50 for a partial ACE match', () => {
-    expect(calculatePoints('ace_match', false, true)).toBe(50);
+  it('puts the focus verse first when focusId is given (daily quest)', () => {
+    for (let i = 0; i < 10; i++) {
+      const questions = generateQuestionSet('en', pool, 'reference_rush', 3, 'item-5');
+      expect(questions[0].meta.id).toBe('item-5');
+    }
   });
 });
 
