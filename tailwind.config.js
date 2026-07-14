@@ -60,6 +60,19 @@ export default {
           DEFAULT: "#5BC0BE",
           foreground: "#0B132B",
         },
+        accent2: {
+          DEFAULT: "hsl(var(--accent2))",
+          foreground: "hsl(var(--accent2-foreground))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+          border: "hsl(var(--gold-border))",
+          soft: "hsl(var(--gold-soft))",
+        },
+        streak: {
+          DEFAULT: "hsl(var(--streak))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,8 +80,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        heading: ["DM Sans", "Inter", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "DM Sans", "Inter", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
@@ -96,6 +109,24 @@ export default {
           "25%": { transform: "translateX(-5px)" },
           "75%": { transform: "translateX(5px)" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 12px hsl(var(--accent2) / 0.35)" },
+          "50%": { boxShadow: "0 0 26px hsl(var(--accent2) / 0.65)" },
+        },
+        "pop": {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.25)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "float-up": {
+          from: { opacity: 1, transform: "translateY(0)" },
+          to: { opacity: 0, transform: "translateY(-36px)" },
+        },
+        "confetti": {
+          "0%": { opacity: 0, transform: "translateY(-16px) rotate(0deg)" },
+          "15%": { opacity: 1 },
+          "100%": { opacity: 0, transform: "translateY(110px) rotate(220deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -104,6 +135,10 @@ export default {
         "slide-in": "slide-in 0.2s ease-out",
         "pulse-success": "pulse-success 0.5s ease-out",
         "shake": "shake 0.3s ease-out",
+        "pulse-glow": "pulse-glow 2.4s ease-in-out infinite",
+        "pop": "pop 0.3s ease-out",
+        "float-up": "float-up 0.8s ease-out forwards",
+        "confetti": "confetti 1.6s ease-in forwards",
       },
     },
   },

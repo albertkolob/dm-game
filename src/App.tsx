@@ -6,6 +6,7 @@ const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })
 const Play = lazy(() => import('./pages/Play').then((m) => ({ default: m.Play })));
 const Teacher = lazy(() => import('./pages/Teacher').then((m) => ({ default: m.Teacher })));
 const Verse = lazy(() => import('./pages/Verse').then((m) => ({ default: m.Verse })));
+const Profile = lazy(() => import('./pages/Profile').then((m) => ({ default: m.Profile })));
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/play/:mode" element={<Play />} />
           <Route path="/teacher" element={<Teacher />} />
           <Route path="/verse/:id" element={<Verse />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

@@ -18,8 +18,76 @@
     "streak": "Streak",
     "dayStreak": "day streak",
     "versesStudied": "verses studied",
-    "selectMode": "Select a Game Mode",
-    "selectSet": "Select a Set"
+    "selectMode": "Choose your mode",
+    "selectSet": "Select a Set",
+    "greeting": "Hey, {{name}}!",
+    "mastery": "Standard works mastery",
+    "classroomBattle": "Classroom battle",
+    "needVerses": "Select at least 4 verses to play",
+    "versesInSet": "verses in your set",
+    "changeSet": "Change set",
+    "notRanked": "Not ranked yet",
+    "bestCombo": "Best ×{{combo}} combo",
+    "bestScore": "Best {{score}}"
+  },
+  "quest": {
+    "daily": "Daily quest",
+    "master": "Master {{ref}}",
+    "reward": "+50 XP · keeps your streak",
+    "done": "Done today! +50 XP earned",
+    "go": "GO"
+  },
+  "progress": {
+    "level": "Level"
+  },
+  "ranks": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum"
+  },
+  "levelTitles": {
+    "novice": "Novice",
+    "learner": "Learner",
+    "disciple": "Disciple",
+    "scholar": "Seminary Scholar",
+    "verseMaster": "Verse Master",
+    "sage": "Doctrine Sage",
+    "legend": "Legend"
+  },
+  "badges": {
+    "firstRound": "First round",
+    "perfectRound": "Flawless",
+    "combo10": "×10 combo",
+    "streak7": "7-day streak",
+    "streak30": "30-day streak",
+    "level5": "Level 5",
+    "level10": "Level 10",
+    "work90": "90% mastery"
+  },
+  "themes": {
+    "appearance": "Appearance",
+    "equip": "Equip",
+    "equipped": "Equipped",
+    "note": "Your pick is stored locally — nothing leaves your phone.",
+    "neonName": "Neon Ascent",
+    "neonDesc": "Dark HUD · combos · rank tiers",
+    "questName": "Scripture Quest",
+    "questDesc": "Light & chunky · easy outdoor reading",
+    "classicName": "Classic",
+    "classicDesc": "The original look · calm & focused"
+  },
+  "profile": {
+    "title": "Profile",
+    "badges": "Badges",
+    "saveProgress": "Save progress on this phone",
+    "saveProgressHint": "Turn off to reset each session",
+    "namePlaceholder": "Your name",
+    "changePhoto": "Change photo",
+    "eraseData": "Erase all my data",
+    "eraseConfirm": "Erase all progress, badges, and settings from this phone? This cannot be undone.",
+    "privacyNote": "Nothing leaves your phone",
+    "lockedBadge": "Locked badge"
   },
   "modes": {
     "title": "Game Modes",
@@ -64,18 +132,28 @@
     "timeUp": "Time's Up!",
     "chooseACE": "Choose ACE Principle",
     "chooseVerse": "Choose Supporting Verse",
-    "acePrompt": "Choose ACE + a verse that supports acting on this truth today."
+    "acePrompt": "Choose ACE + a verse that supports acting on this truth today.",
+    "combo": "Combo ×{{multiplier}}",
+    "hit": "hit"
   },
   "results": {
     "title": "Results",
     "complete": "Round Complete!",
+    "roundComplete": "Round complete",
+    "rankUp": "RANK UP!",
+    "levelUp": "LEVEL UP!",
+    "reachedLevel": "You reached Level {{level}} · {{title}}",
     "finalScore": "Final Score",
     "accuracy": "Accuracy",
     "bestStreak": "Best Streak",
+    "bestCombo": "Best combo",
+    "speedBonus": "Speed bonus",
+    "newBadges": "New badges",
+    "crownsEarned": "Verse crowns earned",
     "timeSpent": "Time Spent",
     "reviewMisses": "Review Misses",
-    "playAgain": "Play Again",
-    "backHome": "Back to Home",
+    "playAgain": "Run It Back",
+    "backHome": "Home",
     "noMisses": "Perfect! No misses this round.",
     "missedVerses": "Missed Verses"
   },
@@ -91,11 +169,20 @@
     "currentTeam": "Current Team",
     "winner": "Winner!",
     "tie": "It's a Tie!",
-    "tapToReveal": "Captain: Tap answer after team decides"
+    "tapToReveal": "Captain: Tap answer after team decides",
+    "upNow": "Up now",
+    "speedHype": "Answer in 5s for a speed bonus +50",
+    "matchOver": "Final scores",
+    "winnerIs": "{{name}} wins!"
   },
   "teacher": {
     "title": "Teacher Settings",
-    "gameSettings": "Game Settings",
+    "gameSetup": "Game Setup",
+    "console": "Teacher console",
+    "combos": "Combos & speed bonuses",
+    "verseSet": "Verse set",
+    "change": "Change",
+    "gameSettings": "Settings",
     "timePerQuestion": "Time per Question",
     "seconds": "seconds",
     "questionsPerRound": "Questions per Round",

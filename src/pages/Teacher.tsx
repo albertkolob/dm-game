@@ -2,15 +2,24 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Users, Settings2, Play, Plus, Minus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Users, Settings2, Play, Plus, Trash2, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { SetBuilder } from '@/components/SetBuilder';
-import { LanguagePicker } from '@/components/LanguagePicker';
 import { useGameStore } from '@/store/useGameStore';
 import { TEAM_COLORS } from '@/data/types';
 import { cn } from '@/lib/utils';
+
+function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button onClick={() => onChange(!on)} className="w-full flex items-center justify-between gap-3 min-h-[46px]" role="switch" aria-checked={on}>
+      <span className="font-semibold text-left">{label}</span>
+      <span className={cn('w-12 h-7 rounded-full transition-colors shrink-0 relative', on ? 'bg-primary' : 'bg-secondary')}>
+        <span className={cn('absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform', on ? 'translate-x-6' : 'translate-x-1')} />
+      </span>
+    </button>
+  );
+}
 
 export function Teacher() {
   const { t } = useTranslation();
@@ -61,48 +70,45 @@ export function Teacher() {
     }
   };
 
+  const tabs = [
+    { id: 'settings' as const, icon: Settings2, label: t('teacher.gameSettings') },
+    { id: 'teams' as const, icon: Users, label: t('team.teams') },
+    { id: 'sets' as const, icon: BookOpen, label: t('nav.setBuilder') },
+  ];
+
   return (
     <div className="min-h-screen bg-background safe-area-padding">
       <div className="container max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Header */}
         <header className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')} aria-label={t('common.back')}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="font-heading text-xl font-bold flex-1">{t('teacher.title')}</h1>
+          <div className="flex-1">
+            <h1 className="font-heading text-xl font-bold leading-tight">{t('teacher.gameSetup')}</h1>
+            <p className="text-xs text-muted-foreground">{t('teacher.console')}</p>
+          </div>
         </header>
 
-        {/* Language Picker */}
-        <LanguagePicker />
-
         {/* Tabs */}
-        <div className="flex gap-2">
-          <Button
-            variant={activeTab === 'settings' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveTab('settings')}
-            className="flex-1"
-          >
-            <Settings2 className="w-4 h-4 mr-2" />
-            {t('teacher.gameSettings')}
-          </Button>
-          <Button
-            variant={activeTab === 'teams' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveTab('teams')}
-            className="flex-1"
-          >
-            <Users className="w-4 h-4 mr-2" />
-            {t('team.teams')}
-          </Button>
-          <Button
-            variant={activeTab === 'sets' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveTab('sets')}
-            className="flex-1"
-          >
-            {t('setBuilder.title')}
-          </Button>
+        <div className="flex gap-2" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 px-1.5 py-2.5 rounded-xl text-xs font-bold transition-colors theme-label pressable',
+                activeTab === tab.id
+                  ? 'bg-primary text-primary-foreground raised-primary'
+                  : 'bg-secondary text-muted-foreground'
+              )}
+            >
+              <tab.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tab.label}</span>
+            </button>
+          ))}
         </div>
 
         {/* Settings Tab */}
@@ -113,129 +119,78 @@ export function Teacher() {
             className="space-y-4"
           >
             {/* Time per question */}
-            <Card>
+            <Card className="raised-card">
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('teacher.timePerQuestion')}</span>
-                  <Badge variant="secondary">{settings.timePerQuestion}s</Badge>
+                  <span className="font-semibold">{t('teacher.timePerQuestion')}</span>
+                  <span className="font-bold text-primary tabular-nums">{settings.timePerQuestion}s</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      updateSettings({
-                        timePerQuestion: Math.max(10, settings.timePerQuestion - 5),
-                      })
-                    }
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <div className="flex-1 h-2 bg-secondary rounded-full">
-                    <div
-                      className="h-full bg-primary rounded-full transition-all"
-                      style={{ width: `${((settings.timePerQuestion - 10) / 20) * 100}%` }}
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      updateSettings({
-                        timePerQuestion: Math.min(30, settings.timePerQuestion + 5),
-                      })
-                    }
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={60}
+                  step={5}
+                  value={settings.timePerQuestion}
+                  onChange={(e) => updateSettings({ timePerQuestion: Number(e.target.value) })}
+                  className="slider"
+                  aria-label={t('teacher.timePerQuestion')}
+                />
               </CardContent>
             </Card>
 
             {/* Questions per round */}
-            <Card>
+            <Card className="raised-card">
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('teacher.questionsPerRound')}</span>
-                  <Badge variant="secondary">{settings.questionsPerRound}</Badge>
+                  <span className="font-semibold">{t('teacher.questionsPerRound')}</span>
+                  <span className="font-bold text-primary tabular-nums">{settings.questionsPerRound}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      updateSettings({
-                        questionsPerRound: Math.max(5, settings.questionsPerRound - 5),
-                      })
-                    }
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <div className="flex-1 h-2 bg-secondary rounded-full">
-                    <div
-                      className="h-full bg-primary rounded-full transition-all"
-                      style={{
-                        width: `${((settings.questionsPerRound - 5) / 25) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      updateSettings({
-                        questionsPerRound: Math.min(30, settings.questionsPerRound + 5),
-                      })
-                    }
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={25}
+                  step={5}
+                  value={settings.questionsPerRound}
+                  onChange={(e) => updateSettings({ questionsPerRound: Number(e.target.value) })}
+                  className="slider"
+                  aria-label={t('teacher.questionsPerRound')}
+                />
               </CardContent>
             </Card>
 
-            {/* Sound & Haptics */}
-            <Card>
-              <CardContent className="p-4 space-y-4">
-                <button
-                  onClick={() => updateSettings({ enableSound: !settings.enableSound })}
-                  className="w-full flex items-center justify-between"
-                >
-                  <span className="font-medium">{t('settings.sound')}</span>
-                  <div
-                    className={cn(
-                      'w-12 h-6 rounded-full transition-colors',
-                      settings.enableSound ? 'bg-primary' : 'bg-secondary'
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        'w-5 h-5 rounded-full bg-white shadow transition-transform mt-0.5',
-                        settings.enableSound ? 'translate-x-6' : 'translate-x-0.5'
-                      )}
-                    />
-                  </div>
-                </button>
+            {/* Toggles */}
+            <Card className="raised-card">
+              <CardContent className="p-4 space-y-1">
+                <Toggle
+                  on={settings.enableCombos}
+                  onChange={(v) => updateSettings({ enableCombos: v })}
+                  label={t('teacher.combos')}
+                />
+                <Toggle
+                  on={settings.enableSound}
+                  onChange={(v) => updateSettings({ enableSound: v })}
+                  label={t('settings.sound')}
+                />
+                <Toggle
+                  on={settings.enableHaptics}
+                  onChange={(v) => updateSettings({ enableHaptics: v })}
+                  label={t('settings.haptics')}
+                />
+              </CardContent>
+            </Card>
 
-                <button
-                  onClick={() => updateSettings({ enableHaptics: !settings.enableHaptics })}
-                  className="w-full flex items-center justify-between"
-                >
-                  <span className="font-medium">{t('settings.haptics')}</span>
-                  <div
-                    className={cn(
-                      'w-12 h-6 rounded-full transition-colors',
-                      settings.enableHaptics ? 'bg-primary' : 'bg-secondary'
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        'w-5 h-5 rounded-full bg-white shadow transition-transform mt-0.5',
-                        settings.enableHaptics ? 'translate-x-6' : 'translate-x-0.5'
-                      )}
-                    />
-                  </div>
-                </button>
+            {/* Verse set row */}
+            <Card className="raised-card">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="font-semibold">{t('teacher.verseSet')}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedIds.length} {t('home.versesInSet')}
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setActiveTab('sets')} className="pressable theme-label">
+                  {t('teacher.change')} →
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
@@ -248,53 +203,31 @@ export function Teacher() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            {/* Enable team mode */}
-            <Card>
+            <Card className="raised-card">
               <CardContent className="p-4">
-                <button
-                  onClick={() => setIsTeamMode(!isTeamMode)}
-                  className="w-full flex items-center justify-between"
-                >
-                  <span className="font-medium">{t('teacher.enableTeamMode')}</span>
-                  <div
-                    className={cn(
-                      'w-12 h-6 rounded-full transition-colors',
-                      isTeamMode ? 'bg-primary' : 'bg-secondary'
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        'w-5 h-5 rounded-full bg-white shadow transition-transform mt-0.5',
-                        isTeamMode ? 'translate-x-6' : 'translate-x-0.5'
-                      )}
-                    />
-                  </div>
-                </button>
+                <Toggle on={isTeamMode} onChange={setIsTeamMode} label={t('teacher.enableTeamMode')} />
               </CardContent>
             </Card>
 
             {isTeamMode && (
               <>
-                {/* Team list */}
                 <div className="space-y-3">
                   {teams.map((team) => (
-                    <Card key={team.id}>
+                    <Card key={team.id} className="raised-card">
                       <CardContent className="p-4 flex items-center gap-3">
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: team.color }}
-                        />
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: team.color }} />
                         <input
                           type="text"
                           value={team.name}
                           onChange={(e) => handleTeamNameChange(team.id, e.target.value)}
-                          className="flex-1 bg-transparent border-b border-border focus:border-primary outline-none py-1"
+                          className="flex-1 bg-transparent border-b border-border focus:border-primary outline-none py-1 font-semibold"
                         />
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveTeam(team.id)}
                           className="text-destructive"
+                          aria-label={t('team.removeTeam')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -303,13 +236,8 @@ export function Teacher() {
                   ))}
                 </div>
 
-                {/* Add team button */}
                 {teams.length < 6 && (
-                  <Button
-                    variant="outline"
-                    onClick={handleAddTeam}
-                    className="w-full"
-                  >
+                  <Button variant="outline" onClick={handleAddTeam} className="w-full pressable">
                     <Plus className="w-4 h-4 mr-2" />
                     {t('team.addTeam')}
                   </Button>
@@ -321,29 +249,24 @@ export function Teacher() {
 
         {/* Sets Tab */}
         {activeTab === 'sets' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <SetBuilder />
           </motion.div>
         )}
 
         {/* Start Game Button */}
-        <div className="pt-4">
+        <div className="pt-2">
           <Button
             onClick={handleStartGame}
             disabled={selectedIds.length < 4}
             size="xl"
-            className="w-full"
+            className="w-full raised-primary-strong pressable theme-label"
           >
             <Play className="w-5 h-5 mr-2" />
             {t('teacher.startGame')}
           </Button>
           {selectedIds.length < 4 && (
-            <p className="text-sm text-muted-foreground text-center mt-2">
-              Select at least 4 verses to play
-            </p>
+            <p className="text-sm text-muted-foreground text-center mt-2">{t('home.needVerses')}</p>
           )}
         </div>
       </div>

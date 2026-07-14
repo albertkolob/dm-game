@@ -20,65 +20,26 @@ export function Timer() {
 
   const percentage = (timeRemaining / settings.timePerQuestion) * 100;
   const isLow = timeRemaining <= 5;
-  const isCritical = timeRemaining <= 3;
+  const minutes = Math.floor(timeRemaining / 60);
+  const seconds = timeRemaining % 60;
 
   return (
-    <div className="relative flex items-center gap-3" role="timer" aria-live="polite">
-      {/* Circular progress */}
-      <div className="relative w-14 h-14">
-        <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-          {/* Background circle */}
-          <circle
-            cx="18"
-            cy="18"
-            r="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            className="text-secondary"
-          />
-          {/* Progress circle */}
-          <motion.circle
-            cx="18"
-            cy="18"
-            r="16"
-            fill="none"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={100}
-            initial={{ strokeDashoffset: 0 }}
-            animate={{ strokeDashoffset: 100 - percentage }}
-            transition={{ duration: 0.3 }}
-            className={cn(
-              isCritical ? 'text-destructive' : isLow ? 'text-warning' : 'text-primary'
-            )}
-            style={{ strokeDasharray: '100 100' }}
-          />
-        </svg>
-        {/* Time text */}
-        <div
-          className={cn(
-            'absolute inset-0 flex items-center justify-center font-bold text-lg',
-            isCritical && 'text-destructive animate-pulse'
-          )}
-        >
-          {timeRemaining}
-        </div>
-      </div>
-
-      {/* Time bar for mobile */}
-      <div className="flex-1 sm:hidden">
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <motion.div
-            className={cn(
-              'h-full rounded-full',
-              isCritical ? 'bg-destructive' : isLow ? 'bg-warning' : 'bg-primary'
-            )}
-            initial={{ width: '100%' }}
-            animate={{ width: `${percentage}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
+    <div className="flex items-center gap-3 flex-1" role="timer" aria-live="polite">
+      <span
+        className={cn(
+          'text-[26px] leading-none font-bold tabular-nums',
+          isLow ? 'text-streak animate-pulse' : 'text-primary'
+        )}
+      >
+        {minutes}:{seconds.toString().padStart(2, '0')}
+      </span>
+      <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+        <motion.div
+          className={cn('h-full rounded-full', isLow ? 'bg-streak' : 'bg-primary')}
+          initial={{ width: '100%' }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 0.3 }}
+        />
       </div>
     </div>
   );

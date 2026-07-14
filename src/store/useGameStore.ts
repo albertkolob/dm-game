@@ -3,6 +3,21 @@ import { persist } from 'zustand/middleware';
 import { GameMode, GameResult, GameSettings, Language, Team, Question } from '@/data/types';
 import { PRESETS, PresetKey } from '@/data';
 import { localDateString } from '@/lib/utils';
+import {
+  COMBO_BASE,
+  COMBO_CAP,
+  comboMultiplier,
+  ACE_PARTIAL_POINTS,
+  SPEED_WINDOW_SECONDS,
+  SPEED_BONUS_TEAM,
+} from '@/lib/progression';
+import { useProgressStore } from './useProgressStore';
+
+export interface AnswerOutcome {
+  correct: boolean;
+  partial?: boolean;
+  timeSpent: number;
+}
 
 interface GameState {
   // Language
@@ -32,6 +47,8 @@ interface GameState {
   score: number;
   streak: number;
   bestStreak: number;
+  fastAnswers: number;
+  lastPointsEarned: number;
   timeRemaining: number;
   lives: number;
 
@@ -56,7 +73,7 @@ interface GameState {
   resumeGame: () => void;
   setCurrentQuestion: (question: Question | null) => void;
   nextQuestion: () => void;
-  answerQuestion: (correct: boolean, points: number) => void;
+  answerQuestion: (outcome: AnswerOutcome) => void;
   setTimeRemaining: (time: number) => void;
   decrementTime: () => void;
   loseLife: () => void;
@@ -67,6 +84,7 @@ interface GameState {
   lastPlayedDate: string | null;
   totalVersesStudied: number;
   updateDayStreak: () => void;
+  resetLocalStats: () => void;
 
   // Questions pool for current game
   questionsPool: Question[];
@@ -97,6 +115,7 @@ export const useGameStore = create<GameState>()(
         enableSound: true,
         enableHaptics: true,
         showHints: true,
+        enableCombos: true,
       },
       updateSettings: (newSettings) =>
         set((state) => ({
@@ -113,6 +132,8 @@ export const useGameStore = create<GameState>()(
       score: 0,
       streak: 0,
       bestStreak: 0,
+      fastAnswers: 0,
+      lastPointsEarned: 0,
       timeRemaining: 20,
       lives: 3,
 
@@ -148,6 +169,8 @@ export const useGameStore = create<GameState>()(
           score: 0,
           streak: 0,
           bestStreak: 0,
+          fastAnswers: 0,
+          lastPointsEarned: 0,
           timeRemaining: get().settings.timePerQuestion,
           lives: mode === 'lightning_ladder' ? 3 : Infinity,
           results: [],
@@ -156,7 +179,17 @@ export const useGameStore = create<GameState>()(
         }),
 
       endGame: () => {
-        const { isPlaying, results, totalVersesStudied } = get();
+        const {
+          isPlaying,
+          results,
+          totalVersesStudied,
+          currentMode,
+          score,
+          bestStreak,
+          fastAnswers,
+          isTeamMode,
+          teams,
+        } = get();
         if (!isPlaying) return; // already ended; don't record stats twice
         set({
           isPlaying: false,
@@ -164,6 +197,24 @@ export const useGameStore = create<GameState>()(
           currentQuestion: null,
           totalVersesStudied: totalVersesStudied + results.length,
         });
+
+        // Meta-progression: XP, crowns, badges, bests, daily quest
+        if (results.length > 0 && currentMode) {
+          get().updateDayStreak();
+          useProgressStore.getState().recordRound(
+            {
+              mode: currentMode,
+              score,
+              bestCombo: Math.min(bestStreak, COMBO_CAP),
+              correct: results.filter((r) => r.correct).length,
+              total: results.length,
+              fastAnswers,
+              verseResults: results.map((r) => ({ id: r.questionId, correct: r.correct })),
+              isTeamRound: isTeamMode && teams.length > 1,
+            },
+            get().dayStreak
+          );
+        }
       },
 
       pauseGame: () => set({ isPaused: true }),
@@ -194,32 +245,48 @@ export const useGameStore = create<GameState>()(
         });
       },
 
-      answerQuestion: (correct, points) => {
-        const { streak, bestStreak, isTeamMode, teams, currentTeamIndex } = get();
+      answerQuestion: ({ correct, partial, timeSpent }) => {
+        const { streak, bestStreak, fastAnswers, isTeamMode, teams, currentTeamIndex, settings } = get();
+        const teamRound = isTeamMode && teams.length > 1;
+        const fast = timeSpent <= SPEED_WINDOW_SECONDS;
 
         // Freeze the timer while the feedback screen is showing
         set({ hasAnswered: true });
 
         if (correct) {
           const newStreak = streak + 1;
-          const streakBonus = Math.floor(newStreak / 5) * 10;
+          const multiplier = settings.enableCombos ? comboMultiplier(newStreak) : 1;
+          let points = COMBO_BASE * multiplier;
+          if (teamRound && fast) points += SPEED_BONUS_TEAM;
 
-          if (isTeamMode && teams.length > 0) {
-            get().updateTeamScore(teams[currentTeamIndex].id, points + streakBonus);
+          if (teamRound) {
+            get().updateTeamScore(teams[currentTeamIndex].id, points);
           }
 
           set({
-            score: get().score + points + streakBonus,
+            score: get().score + points,
             streak: newStreak,
             bestStreak: Math.max(newStreak, bestStreak),
+            fastAnswers: fast && !teamRound ? fastAnswers + 1 : fastAnswers,
+            lastPointsEarned: points,
           });
 
           // Gain life every 5 streak in lightning ladder
           if (newStreak % 5 === 0 && get().currentMode === 'lightning_ladder') {
             get().gainLife();
           }
+        } else if (partial) {
+          // ACE: one of the two picks right — consolation points, combo resets
+          if (teamRound) {
+            get().updateTeamScore(teams[currentTeamIndex].id, ACE_PARTIAL_POINTS);
+          }
+          set({
+            score: get().score + ACE_PARTIAL_POINTS,
+            streak: 0,
+            lastPointsEarned: ACE_PARTIAL_POINTS,
+          });
         } else {
-          set({ streak: 0 });
+          set({ streak: 0, lastPointsEarned: 0 });
 
           if (get().currentMode === 'lightning_ladder') {
             get().loseLife();
@@ -270,6 +337,9 @@ export const useGameStore = create<GameState>()(
           set({ dayStreak: 1, lastPlayedDate: today });
         }
       },
+
+      resetLocalStats: () =>
+        set({ dayStreak: 0, lastPlayedDate: null, totalVersesStudied: 0 }),
 
       // Questions pool
       questionsPool: [],
