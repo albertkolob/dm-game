@@ -74,8 +74,11 @@ export function generateClozeQuestion(
 }
 
 /**
- * Generate an ACE Match question
- * Player picks the ACE principle and a supporting verse
+ * Generate an ACE Match question.
+ * Step 1: which principle does this verse support? (any linked principle counts)
+ * Step 2: which OTHER verse also supports that principle? (any offered verse
+ * that shares the link counts) — so the second step teaches the
+ * principle<->scripture mapping instead of repeating Reference Rush.
  */
 export function generateACEQuestion(
   lang: Language,
@@ -92,27 +95,42 @@ export function generateACEQuestion(
     'divinely_appointed_sources',
   ];
 
-  // Prompt based on language
-  const prompts = {
-    en: `"${item.keyPhrase[lang]}" — Choose the ACE principle and a supporting verse.`,
-    es: `"${item.keyPhrase[lang]}" — Elige el principio ACE y un versículo de apoyo.`,
-    pt: `"${item.keyPhrase[lang]}" — Escolha o princípio ACE e um versículo de apoio.`,
-  };
+  const links: ACE[] = item.aceLinks.length > 0 ? item.aceLinks : ['act_in_faith'];
+  const primary = links[0];
 
-  // Get distractor verses
-  const distractorVerses = shuffle(pool.filter((d) => d.id !== item.id))
-    .slice(0, 3)
+  // The quote is transparent about its source; the questions live in the UI labels
+  const prompt = `"${item.keyPhrase[lang]}" — ${item.reference}`;
+
+  // Partner verse that shares the primary principle; fall back to the source
+  // verse itself when the pool has no partner (tiny custom sets)
+  const partners = pool.filter((d) => d.id !== item.id && d.aceLinks.includes(primary));
+  const partner = partners.length > 0 ? randomItem(partners) : item;
+
+  // Prefer distractors that do NOT share the principle; top up if needed
+  const nonMatching = shuffle(
+    pool.filter((d) => d.id !== item.id && d.id !== partner.id && !d.aceLinks.includes(primary))
+  );
+  let distractors = nonMatching.slice(0, 3);
+  if (distractors.length < 3) {
+    const fillers = shuffle(
+      pool.filter((d) => d.id !== item.id && d.id !== partner.id && !distractors.includes(d))
+    );
+    distractors = [...distractors, ...fillers.slice(0, 3 - distractors.length)];
+  }
+
+  const optionItems = shuffle([partner, ...distractors]);
+  const correctVerses = optionItems
+    .filter((d) => d.id === partner.id || d.aceLinks.includes(primary))
     .map((d) => d.reference);
-
-  const verseOptions = shuffle([item.reference, ...distractorVerses]);
 
   return {
     type: 'ace',
-    prompt: prompts[lang],
+    prompt,
     optionsACE: aceOptions,
-    correctACE: item.aceLinks[0] || 'act_in_faith',
-    optionsVerse: verseOptions,
-    correctVerse: item.reference,
+    correctACEs: links,
+    acePrimary: primary,
+    optionsVerse: optionItems.map((d) => d.reference),
+    correctVerses,
     meta: {
       id: item.id,
       ref: item.reference,

@@ -130,11 +130,12 @@
     "resume": "Resume",
     "quit": "Quit",
     "timeUp": "Time's Up!",
-    "chooseACE": "Choose ACE Principle",
+    "chooseACE": "Which principle does this verse support?",
     "chooseVerse": "Choose Supporting Verse",
     "acePrompt": "Choose ACE + a verse that supports acting on this truth today.",
     "combo": "Combo ×{{multiplier}}",
-    "hit": "hit"
+    "hit": "hit",
+    "chooseVerseFor": "Which verse also supports {{principle}}?"
   },
   "results": {
     "title": "Results",

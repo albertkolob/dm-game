@@ -27,9 +27,13 @@ export interface Question {
   options?: string[];
   correctIndex?: number;
   optionsACE?: string[];
-  correctACE?: string;
+  /** every principle the source verse is linked to counts as correct */
+  correctACEs?: string[];
+  /** the principle used to build the supporting-verse step */
+  acePrimary?: string;
   optionsVerse?: string[];
-  correctVerse?: string;
+  /** every offered verse that supports acePrimary counts as correct */
+  correctVerses?: string[];
   meta: {
     id: string;
     ref?: string;
