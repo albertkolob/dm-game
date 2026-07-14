@@ -1,22 +1,26 @@
 import { DMItem } from './types';
 
+// Old Testament course passages (Bible portion)
+// Source: Doctrinal Mastery Core Document (2023), churchofjesuschrist.org.
+// Spanish/Portuguese key phrases follow the Church's official translations;
+// see docs/TRANSLATION-REVIEW.md for per-entry verification status.
 export const DM_OT: DMItem[] = [
   {
     id: "ot-gen-1-26-27",
     work: "OT",
     book: "Genesis",
-    reference: "Genesis 1:26-27",
+    reference: "Genesis 1:26–27",
     keyPhrase: {
-      en: "God said, Let us make man in our image, after our likeness... male and female created he them.",
-      es: "Dijo Dios: Hagamos al hombre a nuestra imagen, conforme a nuestra semejanza... varón y hembra los creó.",
-      pt: "Disse Deus: Façamos o homem à nossa imagem, conforme a nossa semelhança... macho e fêmea os criou."
+      en: "God created man in his own image.",
+      es: "Creó Dios al hombre a su imagen.",
+      pt: "Criou Deus o homem à sua imagem."
     },
     cloze: {
-      en: "God said, Let us make man in our __________, after our __________... male and __________ created he them.",
-      es: "Dijo Dios: Hagamos al hombre a nuestra __________, conforme a nuestra __________... varón y __________ los creó.",
-      pt: "Disse Deus: Façamos o homem à nossa __________, conforme a nossa __________... macho e __________ os criou."
+      en: "God __________ man in his own __________.",
+      es: "Creó Dios al __________ a su __________.",
+      pt: "__________ Deus o homem à sua __________."
     },
-    tags: ["creation", "image", "man"],
+    tags: ["creation", "identity"],
     aceLinks: ["eternal_perspective"]
   },
   {
@@ -25,71 +29,53 @@ export const DM_OT: DMItem[] = [
     book: "Genesis",
     reference: "Genesis 2:24",
     keyPhrase: {
-      en: "Therefore shall a man leave his father and his mother, and shall cleave unto his wife: and they shall be one flesh.",
-      es: "Por tanto, dejará el hombre a su padre y a su madre, y se unirá a su esposa, y serán una sola carne.",
-      pt: "Portanto, deixará o homem o seu pai e a sua mãe e apegar-se-á à sua mulher, e serão uma só carne."
+      en: "A man … shall cleave unto his wife: and they shall be one.",
+      es: "El hombre … se allegará a su mujer, y serán una sola carne.",
+      pt: "O homem … apegar-se-á à sua mulher, e serão ambos uma carne."
     },
     cloze: {
-      en: "Therefore shall a man leave his __________ and his mother, and shall __________ unto his wife: and they shall be __________ flesh.",
-      es: "Por tanto, dejará el hombre a su __________ y a su madre, y se __________ a su esposa, y serán una __________ carne.",
-      pt: "Portanto, deixará o homem o seu __________ e a sua mãe e __________ à sua mulher, e serão uma __________ carne."
+      en: "A man … shall __________ unto his wife: and they shall be one.",
+      es: "El __________ … se __________ a su mujer, y serán una sola carne.",
+      pt: "O homem … __________-se-á à sua __________, e serão ambos uma carne."
     },
-    tags: ["marriage", "family", "unity"],
+    tags: ["marriage", "family"],
     aceLinks: ["eternal_perspective"]
+  },
+  {
+    id: "ot-gen-39-9",
+    work: "OT",
+    book: "Genesis",
+    reference: "Genesis 39:9",
+    keyPhrase: {
+      en: "How then can I do this great wickedness, and sin against God?",
+      es: "¿Cómo, pues, haría yo esta gran maldad y pecaría contra Dios?",
+      pt: "Como, pois, faria eu tamanha maldade e pecaria contra Deus?"
+    },
+    cloze: {
+      en: "How then can I do this great __________, and sin __________ God?",
+      es: "¿Cómo, pues, haría yo esta gran __________ y __________ contra Dios?",
+      pt: "Como, pois, faria eu __________ __________ e pecaria contra Deus?"
+    },
+    tags: ["integrity", "chastity"],
+    aceLinks: ["act_in_faith"]
   },
   {
     id: "ot-ex-20-3-17",
     work: "OT",
     book: "Exodus",
-    reference: "Exodus 20:3-17",
+    reference: "Exodus 20:3–17",
     keyPhrase: {
-      en: "Thou shalt have no other gods before me... Honour thy father and thy mother... Thou shalt not kill... commit adultery... steal... bear false witness... covet.",
-      es: "No tendrás dioses ajenos delante de mí... Honra a tu padre y a tu madre... No matarás... No cometerás adulterio... No hurtarás... No hablarás falso testimonio... No codiciarás.",
-      pt: "Não terás outros deuses diante de mim... Honra teu pai e tua mãe... Não matarás... Não adulterarás... Não furtarás... Não dirás falso testemunho... Não cobiçarás."
+      en: "The Ten Commandments",
+      es: "Los Diez Mandamientos",
+      pt: "Os Dez Mandamentos"
     },
     cloze: {
-      en: "Thou shalt have no other __________ before me... Honour thy __________ and thy mother... Thou shalt not __________... commit adultery... steal... bear false witness... covet.",
-      es: "No tendrás __________ ajenos delante de mí... Honra a tu __________ y a tu madre... No __________... No cometerás adulterio... No hurtarás.",
-      pt: "Não terás outros __________ diante de mim... Honra teu __________ e tua mãe... Não __________... Não adulterarás... Não furtarás."
+      en: "The Ten __________",
+      es: "Los Diez __________",
+      pt: "Os Dez __________"
     },
-    tags: ["commandments", "law", "obedience"],
+    tags: ["commandments"],
     aceLinks: ["act_in_faith"]
-  },
-  {
-    id: "ot-lev-19-18",
-    work: "OT",
-    book: "Leviticus",
-    reference: "Leviticus 19:18",
-    keyPhrase: {
-      en: "Thou shalt love thy neighbour as thyself: I am the Lord.",
-      es: "Amarás a tu prójimo como a ti mismo. Yo soy Jehová.",
-      pt: "Amarás o teu próximo como a ti mesmo. Eu sou o Senhor."
-    },
-    cloze: {
-      en: "Thou shalt __________ thy neighbour as __________: I am the __________.",
-      es: "__________ a tu prójimo como a __________. Yo soy __________.",
-      pt: "__________ o teu próximo como a __________. Eu sou o __________."
-    },
-    tags: ["love", "neighbor", "commandment"],
-    aceLinks: ["act_in_faith"]
-  },
-  {
-    id: "ot-josh-1-8",
-    work: "OT",
-    book: "Joshua",
-    reference: "Joshua 1:8",
-    keyPhrase: {
-      en: "This book of the law shall not depart out of thy mouth; but thou shalt meditate therein day and night.",
-      es: "Este libro de la ley no se apartará de tu boca, sino que meditarás en él de día y de noche.",
-      pt: "Este livro da lei não se apartará da tua boca; antes meditarás nele dia e noite."
-    },
-    cloze: {
-      en: "This book of the __________ shall not depart out of thy mouth; but thou shalt __________ therein day and __________.",
-      es: "Este libro de la __________ no se apartará de tu boca, sino que __________ en él de día y de __________.",
-      pt: "Este livro da __________ não se apartará da tua boca; antes __________ nele dia e __________."
-    },
-    tags: ["scriptures", "meditation", "study"],
-    aceLinks: ["divinely_appointed_sources"]
   },
   {
     id: "ot-josh-24-15",
@@ -97,88 +83,52 @@ export const DM_OT: DMItem[] = [
     book: "Joshua",
     reference: "Joshua 24:15",
     keyPhrase: {
-      en: "Choose you this day whom ye will serve... but as for me and my house, we will serve the Lord.",
-      es: "Escoged hoy a quién habéis de servir... pero yo y mi casa serviremos a Jehová.",
-      pt: "Escolhei hoje a quem sirvais... porém eu e a minha casa serviremos ao Senhor."
+      en: "Choose you this day whom ye will serve.",
+      es: "Escogeos hoy a quién sirváis.",
+      pt: "Escolhei hoje a quem sirvais."
     },
     cloze: {
-      en: "__________ you this day whom ye will serve... but as for me and my __________, we will __________ the Lord.",
-      es: "__________ hoy a quién habéis de servir... pero yo y mi __________ __________ a Jehová.",
-      pt: "__________ hoje a quem sirvais... porém eu e a minha __________ __________ ao Senhor."
+      en: "__________ you this day whom ye will __________.",
+      es: "__________ hoy a quién __________.",
+      pt: "__________ hoje a quem __________."
     },
-    tags: ["choice", "family", "service"],
+    tags: ["agency", "commitment"],
     aceLinks: ["act_in_faith"]
-  },
-  {
-    id: "ot-1sam-16-7",
-    work: "OT",
-    book: "1 Samuel",
-    reference: "1 Samuel 16:7",
-    keyPhrase: {
-      en: "The Lord seeth not as man seeth; for man looketh on the outward appearance, but the Lord looketh on the heart.",
-      es: "Jehová no mira lo que mira el hombre, pues el hombre mira lo que está delante de sus ojos, pero Jehová mira el corazón.",
-      pt: "O Senhor não vê como vê o homem, pois o homem vê o que está diante dos olhos, porém o Senhor olha para o coração."
-    },
-    cloze: {
-      en: "The Lord seeth not as man seeth; for man looketh on the outward __________, but the Lord looketh on the __________.",
-      es: "Jehová no mira lo que mira el hombre, pues el hombre mira lo que está delante de sus __________, pero Jehová mira el __________.",
-      pt: "O Senhor não vê como vê o homem, pois o homem vê o que está diante dos __________, porém o Senhor olha para o __________."
-    },
-    tags: ["heart", "judgment", "appearance"],
-    aceLinks: ["eternal_perspective"]
   },
   {
     id: "ot-ps-24-3-4",
     work: "OT",
     book: "Psalms",
-    reference: "Psalm 24:3-4",
+    reference: "Psalm 24:3–4",
     keyPhrase: {
-      en: "Who shall ascend into the hill of the Lord? He that hath clean hands, and a pure heart.",
-      es: "¿Quién subirá al monte de Jehová? El limpio de manos y puro de corazón.",
-      pt: "Quem subirá ao monte do Senhor? Aquele que tem mãos limpas e coração puro."
+      en: "Who shall stand in his holy place? He that hath clean hands, and a pure heart.",
+      es: "¿Quién estará en su lugar santo? El limpio de manos y puro de corazón.",
+      pt: "Quem estará no seu lugar santo? Aquele que é limpo de mãos e puro de coração."
     },
     cloze: {
-      en: "Who shall __________ into the hill of the Lord? He that hath clean __________, and a pure __________.",
-      es: "¿Quién __________ al monte de Jehová? El limpio de __________ y puro de __________.",
-      pt: "Quem __________ ao monte do Senhor? Aquele que tem __________ limpas e __________ puro."
+      en: "Who shall __________ in his holy __________? He that hath clean hands, and a pure heart.",
+      es: "¿Quién __________ en su lugar santo? El limpio de manos y puro de __________.",
+      pt: "Quem __________ no seu lugar santo? Aquele que é limpo de mãos e puro de __________."
     },
-    tags: ["purity", "temple", "worthiness"],
+    tags: ["temple", "purity"],
     aceLinks: ["act_in_faith"]
-  },
-  {
-    id: "ot-ps-119-105",
-    work: "OT",
-    book: "Psalms",
-    reference: "Psalm 119:105",
-    keyPhrase: {
-      en: "Thy word is a lamp unto my feet, and a light unto my path.",
-      es: "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.",
-      pt: "Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho."
-    },
-    cloze: {
-      en: "Thy __________ is a lamp unto my __________, and a light unto my __________.",
-      es: "__________ es a mis pies tu palabra, y __________ a mi __________.",
-      pt: "__________ para os meus pés é a tua palavra, e __________ para o meu __________."
-    },
-    tags: ["scriptures", "guidance", "light"],
-    aceLinks: ["divinely_appointed_sources"]
   },
   {
     id: "ot-prov-3-5-6",
     work: "OT",
     book: "Proverbs",
-    reference: "Proverbs 3:5-6",
+    reference: "Proverbs 3:5–6",
     keyPhrase: {
-      en: "Trust in the Lord with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him.",
-      es: "Confía en Jehová con todo tu corazón, y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos.",
-      pt: "Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos."
+      en: "Trust in the Lord with all thine heart … and he shall direct thy paths.",
+      es: "Confía en Jehová con todo tu corazón … y él enderezará tus veredas.",
+      pt: "Confia no Senhor de todo o teu coração … e ele endireitará as tuas veredas."
     },
     cloze: {
-      en: "__________ in the Lord with all thine heart; and lean not unto thine own __________. In all thy ways __________ him.",
-      es: "__________ en Jehová con todo tu corazón, y no te apoyes en tu propia __________. __________ en todos tus caminos.",
-      pt: "__________ no Senhor de todo o teu coração e não te estribes no teu próprio __________. __________ em todos os teus caminhos."
+      en: "__________ in the Lord with all thine heart … and he shall __________ thy paths.",
+      es: "Confía en Jehová con todo tu __________ … y él __________ tus veredas.",
+      pt: "Confia no Senhor de todo o teu __________ … e ele __________ as tuas veredas."
     },
-    tags: ["trust", "guidance", "faith"],
+    tags: ["trust", "guidance"],
     aceLinks: ["act_in_faith"]
   },
   {
@@ -187,107 +137,179 @@ export const DM_OT: DMItem[] = [
     book: "Isaiah",
     reference: "Isaiah 1:18",
     keyPhrase: {
-      en: "Come now, and let us reason together, saith the Lord: though your sins be as scarlet, they shall be as white as snow.",
-      es: "Venid luego, dice Jehová, y razonemos juntos; aunque vuestros pecados sean como la grana, como la nieve serán emblanquecidos.",
-      pt: "Vinde, pois, e arrazoemos, diz o Senhor: ainda que os vossos pecados sejam como a escarlata, eles se tornarão brancos como a neve."
+      en: "Though your sins be as scarlet, they shall be as white as snow.",
+      es: "Aunque vuestros pecados sean como la grana, como la nieve serán emblanquecidos.",
+      pt: "Ainda que os vossos pecados sejam como a escarlata, eles se tornarão brancos como a neve."
     },
     cloze: {
-      en: "Come now, and let us __________ together, saith the Lord: though your sins be as __________, they shall be as white as __________.",
-      es: "Venid luego, dice Jehová, y __________ juntos; aunque vuestros pecados sean como la __________, como la __________ serán emblanquecidos.",
-      pt: "Vinde, pois, e __________, diz o Senhor: ainda que os vossos pecados sejam como a __________, eles se tornarão brancos como a __________."
+      en: "__________ your sins be as __________, they shall be as white as snow.",
+      es: "Aunque __________ pecados sean como la grana, como la nieve serán __________.",
+      pt: "Ainda que os vossos pecados sejam como a __________, eles se __________ brancos como a neve."
     },
-    tags: ["repentance", "forgiveness", "Atonement"],
+    tags: ["repentance", "forgiveness"],
     aceLinks: ["act_in_faith", "eternal_perspective"]
+  },
+  {
+    id: "ot-isa-5-20",
+    work: "OT",
+    book: "Isaiah",
+    reference: "Isaiah 5:20",
+    keyPhrase: {
+      en: "Woe unto them that call evil good, and good evil.",
+      es: "¡Ay de los que a lo malo llaman bueno, y a lo bueno, malo!",
+      pt: "Ai dos que ao mal chamam bem, e ao bem, mal."
+    },
+    cloze: {
+      en: "Woe unto them that call evil good, and good evil.",
+      es: "¡Ay de los que a lo malo __________ __________, y a lo bueno, malo!",
+      pt: "Ai dos que ao mal __________ bem, e ao bem, mal."
+    },
+    tags: ["discernment"],
+    aceLinks: ["eternal_perspective"]
   },
   {
     id: "ot-isa-29-13-14",
     work: "OT",
     book: "Isaiah",
-    reference: "Isaiah 29:13-14",
+    reference: "Isaiah 29:13–14",
     keyPhrase: {
-      en: "This people draw near me with their mouth... but have removed their heart far from me... I will proceed to do a marvellous work.",
-      es: "Este pueblo se acerca a mí con su boca... pero su corazón está lejos de mí... he aquí que yo haré una obra maravillosa.",
-      pt: "Este povo se aproxima de mim com a sua boca... mas o seu coração está longe de mim... eis que continuarei a fazer uma obra maravilhosa."
+      en: "The restoration of the gospel is \"a marvellous work and a wonder.\"",
+      es: "La Restauración del Evangelio es \"una obra maravillosa y un prodigio\".",
+      pt: "A Restauração do evangelho é \"uma obra maravilhosa e um assombro\"."
     },
     cloze: {
-      en: "This people draw near me with their __________... but have removed their __________ far from me... I will proceed to do a __________ work.",
-      es: "Este pueblo se acerca a mí con su __________... pero su __________ está lejos de mí... he aquí que yo haré una obra __________.",
-      pt: "Este povo se aproxima de mim com a sua __________... mas o seu __________ está longe de mim... eis que continuarei a fazer uma obra __________."
+      en: "The __________ of the gospel is \"a __________ work and a wonder.\"",
+      es: "La __________ del Evangelio es \"una obra __________ y un prodigio\".",
+      pt: "A __________ do evangelho é \"uma obra __________ e um assombro\"."
     },
-    tags: ["restoration", "apostasy", "marvelous work"],
-    aceLinks: ["divinely_appointed_sources", "eternal_perspective"]
+    tags: ["restoration"],
+    aceLinks: ["divinely_appointed_sources"]
   },
   {
     id: "ot-isa-53-3-5",
     work: "OT",
     book: "Isaiah",
-    reference: "Isaiah 53:3-5",
+    reference: "Isaiah 53:3–5",
     keyPhrase: {
-      en: "He is despised and rejected of men; a man of sorrows... he was wounded for our transgressions.",
-      es: "Despreciado y desechado entre los hombres, varón de dolores... herido fue por nuestras transgresiones.",
-      pt: "Era desprezado e rejeitado dos homens; homem de dores... ele foi ferido pelas nossas transgressões."
+      en: "Surely [Jesus Christ] hath borne our griefs, and carried our sorrows.",
+      es: "Ciertamente llevó [Jesucristo] nuestras enfermedades y sufrió nuestros dolores.",
+      pt: "Verdadeiramente, [Jesus Cristo] tomou sobre si as nossas enfermidades e as nossas dores levou sobre si."
     },
     cloze: {
-      en: "He is __________ and rejected of men; a man of __________... he was __________ for our transgressions.",
-      es: "__________ y desechado entre los hombres, varón de __________... __________ fue por nuestras transgresiones.",
-      pt: "Era __________ e rejeitado dos homens; homem de __________... ele foi __________ pelas nossas transgressões."
+      en: "Surely [Jesus Christ] hath borne our griefs, and __________ our __________.",
+      es: "__________ llevó [Jesucristo] nuestras __________ y sufrió nuestros dolores.",
+      pt: "__________, [Jesus Cristo] tomou sobre si as nossas __________ e as nossas dores levou sobre si."
     },
-    tags: ["Atonement", "Christ", "suffering"],
+    tags: ["atonement"],
     aceLinks: ["eternal_perspective"]
   },
   {
     id: "ot-isa-58-6-7",
     work: "OT",
     book: "Isaiah",
-    reference: "Isaiah 58:6-7",
+    reference: "Isaiah 58:6–7",
     keyPhrase: {
-      en: "Is not this the fast that I have chosen? to loose the bands of wickedness... to deal thy bread to the hungry.",
-      es: "¿No es este el ayuno que yo escogí: desatar las ligaduras de impiedad... compartir tu pan con el hambriento?",
-      pt: "Não é este o jejum que escolhi: que soltes as ligaduras da impiedade... que repartas o teu pão com o faminto?"
+      en: "The blessings of a proper fast",
+      es: "Las bendiciones de un ayuno apropiado",
+      pt: "As bênçãos do jejum adequado"
     },
     cloze: {
-      en: "Is not this the __________ that I have chosen? to loose the bands of wickedness... to deal thy __________ to the __________.",
-      es: "¿No es este el __________ que yo escogí: desatar las ligaduras de impiedad... compartir tu __________ con el __________?",
-      pt: "Não é este o __________ que escolhi: que soltes as ligaduras da impiedade... que repartas o teu __________ com o __________?"
+      en: "The __________ of a __________ fast",
+      es: "Las __________ de un ayuno __________",
+      pt: "As __________ do jejum __________"
     },
-    tags: ["fasting", "service", "charity"],
+    tags: ["fasting"],
+    aceLinks: ["act_in_faith"]
+  },
+  {
+    id: "ot-isa-58-13-14",
+    work: "OT",
+    book: "Isaiah",
+    reference: "Isaiah 58:13–14",
+    keyPhrase: {
+      en: "Turn away … from doing thy pleasure on my holy day; and call the sabbath a delight.",
+      es: "Retrae tu pie … de hacer tu voluntad en mi día santo, y llama al día de reposo delicia.",
+      pt: "Desvia … de fazer a tua vontade no meu santo dia, e chama ao sábado deleitoso."
+    },
+    cloze: {
+      en: "Turn away … from doing thy __________ on my holy day; and call the __________ a delight.",
+      es: "Retrae tu pie … de hacer tu __________ en mi día santo, y llama al día de reposo __________.",
+      pt: "Desvia … de fazer a tua __________ no meu santo dia, e chama ao sábado __________."
+    },
+    tags: ["sabbath"],
     aceLinks: ["act_in_faith"]
   },
   {
     id: "ot-jer-1-4-5",
     work: "OT",
     book: "Jeremiah",
-    reference: "Jeremiah 1:4-5",
+    reference: "Jeremiah 1:4–5",
     keyPhrase: {
-      en: "Before I formed thee in the belly I knew thee; and before thou camest forth out of the womb I sanctified thee.",
-      es: "Antes que te formara en el vientre, te conocí; y antes que nacieras, te santifiqué.",
-      pt: "Antes que te formasse no ventre te conheci; e antes que saísses da madre te santifiquei."
+      en: "Before I formed thee in the belly … I ordained thee a prophet unto the nations.",
+      es: "Antes que te formase en el vientre … te di por profeta a las naciones.",
+      pt: "Antes que te formasse no ventre … às nações te dei por profeta."
     },
     cloze: {
-      en: "Before I __________ thee in the belly I knew thee; and before thou camest forth out of the womb I __________ thee.",
-      es: "Antes que te __________ en el vientre, te conocí; y antes que nacieras, te __________.",
-      pt: "Antes que te __________ no ventre te conheci; e antes que saísses da madre te __________."
+      en: "Before I formed thee in the belly … I __________ thee a __________ unto the nations.",
+      es: "Antes que te __________ en el vientre … te di por profeta a las __________.",
+      pt: "Antes que te __________ no ventre … às nações te dei por __________."
     },
-    tags: ["premortal", "foreordination", "purpose"],
+    tags: ["premortal life", "prophets"],
     aceLinks: ["eternal_perspective"]
+  },
+  {
+    id: "ot-ezek-3-16-17",
+    work: "OT",
+    book: "Ezekiel",
+    reference: "Ezekiel 3:16–17",
+    keyPhrase: {
+      en: "The prophet is \"a watchman unto the house of Israel.\"",
+      es: "El profeta es \"atalaya a la casa de Israel\".",
+      pt: "O profeta é \"atalaia sobre a casa de Israel\"."
+    },
+    cloze: {
+      en: "The __________ is \"a __________ unto the house of Israel.\"",
+      es: "El __________ es \"__________ a la casa de Israel\".",
+      pt: "O __________ é \"__________ sobre a casa de Israel\"."
+    },
+    tags: ["prophets"],
+    aceLinks: ["divinely_appointed_sources"]
   },
   {
     id: "ot-ezek-37-15-17",
     work: "OT",
     book: "Ezekiel",
-    reference: "Ezekiel 37:15-17",
+    reference: "Ezekiel 37:15–17",
     keyPhrase: {
-      en: "Take thee one stick, and write upon it, For Judah... take another stick, and write upon it, For Joseph... and they shall become one in thine hand.",
-      es: "Toma una vara y escribe en ella: Para Judá... toma después otra vara y escribe en ella: Para José... y serán una sola en tu mano.",
-      pt: "Toma uma vara e escreve nela: Para Judá... e toma outra vara e escreve nela: Para José... e elas se farão uma só na tua mão."
+      en: "The Bible and the Book of Mormon \"shall become one in thine hand.\"",
+      es: "La Biblia y el Libro de Mormón \"serán uno solo en tu mano\".",
+      pt: "A Bíblia e o Livro de Mórmon \"serão um só na tua mão\"."
     },
     cloze: {
-      en: "Take thee one __________, and write upon it, For Judah... take another stick, and write upon it, For __________... and they shall become __________ in thine hand.",
-      es: "Toma una __________ y escribe en ella: Para Judá... toma después otra vara y escribe en ella: Para __________... y serán una __________ en tu mano.",
-      pt: "Toma uma __________ e escreve nela: Para Judá... e toma outra vara e escreve nela: Para __________... e elas se farão uma __________ na tua mão."
+      en: "The Bible and the Book of __________ \"shall __________ one in thine hand.\"",
+      es: "La __________ y el Libro de __________ \"serán uno solo en tu mano\".",
+      pt: "A __________ e o Livro de __________ \"serão um só na tua mão\"."
     },
-    tags: ["Book of Mormon", "Bible", "scriptures"],
+    tags: ["scriptures", "book of mormon"],
     aceLinks: ["divinely_appointed_sources"]
+  },
+  {
+    id: "ot-dan-2-44-45",
+    work: "OT",
+    book: "Daniel",
+    reference: "Daniel 2:44–45",
+    keyPhrase: {
+      en: "God shall \"set up a kingdom, which shall never be destroyed.\"",
+      es: "Dios \"levantará un reino que no será jamás destruido\".",
+      pt: "Deus \"levantará um reino que não será jamais destruído\"."
+    },
+    cloze: {
+      en: "God shall \"set up a __________, which shall never be __________.\"",
+      es: "Dios \"__________ un reino que no será jamás __________\".",
+      pt: "Deus \"__________ um reino que não será jamais __________\"."
+    },
+    tags: ["restoration", "kingdom of god"],
+    aceLinks: ["divinely_appointed_sources", "eternal_perspective"]
   },
   {
     id: "ot-amos-3-7",
@@ -295,52 +317,52 @@ export const DM_OT: DMItem[] = [
     book: "Amos",
     reference: "Amos 3:7",
     keyPhrase: {
-      en: "Surely the Lord God will do nothing, but he revealeth his secret unto his servants the prophets.",
-      es: "Porque no hará nada Jehová el Señor sin que revele su secreto a sus siervos los profetas.",
-      pt: "Certamente o Senhor Deus não fará coisa alguma, sem ter revelado o seu segredo aos seus servos, os profetas."
+      en: "The Lord God … revealeth his secret unto his servants the prophets.",
+      es: "Jehová el Señor … revela su secreto a sus siervos los profetas.",
+      pt: "O Senhor Deus … revela o seu segredo aos seus servos, os profetas."
     },
     cloze: {
-      en: "Surely the Lord God will do nothing, but he __________ his secret unto his servants the __________.",
-      es: "Porque no hará nada Jehová el Señor sin que __________ su secreto a sus siervos los __________.",
-      pt: "Certamente o Senhor Deus não fará coisa alguma, sem ter __________ o seu segredo aos seus servos, os __________."
+      en: "The Lord God … __________ his secret unto his __________ the prophets.",
+      es: "Jehová el Señor … revela su __________ a sus siervos los __________.",
+      pt: "O Senhor Deus … revela o seu __________ aos seus servos, os __________."
     },
-    tags: ["prophets", "revelation", "knowledge"],
+    tags: ["prophets", "revelation"],
     aceLinks: ["divinely_appointed_sources"]
   },
   {
     id: "ot-mal-3-8-10",
     work: "OT",
     book: "Malachi",
-    reference: "Malachi 3:8-10",
+    reference: "Malachi 3:8–10",
     keyPhrase: {
-      en: "Will a man rob God? Yet ye have robbed me... in tithes and offerings... and I will pour you out a blessing.",
-      es: "¿Robará el hombre a Dios? Pues vosotros me habéis robado... en los diezmos y en las ofrendas... derramaré sobre vosotros una bendición.",
-      pt: "Roubará o homem a Deus? Todavia vós me roubais... nos dízimos e nas ofertas... derramarei sobre vós uma bênção."
+      en: "The blessings of paying tithing",
+      es: "Las bendiciones de pagar el diezmo",
+      pt: "As bênçãos de pagar o dízimo"
     },
     cloze: {
-      en: "Will a man rob God? Yet ye have robbed me... in __________ and offerings... and I will pour you out a __________.",
-      es: "¿Robará el hombre a Dios? Pues vosotros me habéis robado... en los __________ y en las ofrendas... derramaré sobre vosotros una __________.",
-      pt: "Roubará o homem a Deus? Todavia vós me roubais... nos __________ e nas ofertas... derramarei sobre vós uma __________."
+      en: "The __________ of paying __________",
+      es: "Las __________ de pagar el __________",
+      pt: "As __________ de pagar o __________"
     },
-    tags: ["tithing", "blessings", "obedience"],
+    tags: ["tithing"],
     aceLinks: ["act_in_faith"]
   },
   {
     id: "ot-mal-4-5-6",
     work: "OT",
     book: "Malachi",
-    reference: "Malachi 4:5-6",
+    reference: "Malachi 4:5–6",
     keyPhrase: {
-      en: "Behold, I will send you Elijah the prophet... and he shall turn the heart of the fathers to the children, and the heart of the children to their fathers.",
-      es: "He aquí, yo os envío al profeta Elías... y él volverá el corazón de los padres a los hijos, y el corazón de los hijos a los padres.",
-      pt: "Eis que eu vos enviarei o profeta Elias... e ele converterá o coração dos pais aos filhos e o coração dos filhos a seus pais."
+      en: "Elijah \"shall turn … the heart of the children to their fathers.\"",
+      es: "Elías \"hará volver el corazón … de los hijos hacia los padres\".",
+      pt: "Elias \"converterá … o coração dos filhos a seus pais\"."
     },
     cloze: {
-      en: "Behold, I will send you __________ the prophet... and he shall turn the __________ of the fathers to the children, and the heart of the __________ to their fathers.",
-      es: "He aquí, yo os envío al profeta __________... y él volverá el __________ de los padres a los hijos, y el corazón de los __________ a los padres.",
-      pt: "Eis que eu vos enviarei o profeta __________... e ele converterá o __________ dos pais aos filhos e o coração dos __________ a seus pais."
+      en: "Elijah \"shall turn … the heart of the __________ to their __________.\"",
+      es: "Elías \"hará __________ el __________ … de los hijos hacia los padres\".",
+      pt: "Elias \"__________ … o __________ dos filhos a seus pais\"."
     },
-    tags: ["Elijah", "family", "temple"],
-    aceLinks: ["eternal_perspective", "divinely_appointed_sources"]
+    tags: ["elijah", "family history"],
+    aceLinks: ["eternal_perspective"]
   }
 ];
